@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Axarkia — Plataforma de WhatsApp Business</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a2e;height:100vh;overflow:hidden}
+
+/* NAV */
+.nav{background:#0f0f1a;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:fixed;top:0;left:0;right:0;z-index:1000}
+.nav-logo{font-size:18px;font-weight:700;color:#fff}.nav-logo span{color:#6c63ff}
+.nav-right{display:flex;align-items:center;gap:10px;color:#aaa;font-size:13px}
+.nav-avatar{width:30px;height:30px;background:#6c63ff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+
+/* LAYOUT */
+.layout{display:flex;padding-top:56px;height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:210px;background:#fff;border-right:1px solid #e8e8e8;padding:16px 0;position:fixed;top:56px;bottom:0;overflow-y:auto}
+.sidebar-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#bbb;padding:12px 18px 4px}
+.sidebar-item{padding:9px 18px;font-size:13px;color:#666;cursor:pointer;display:flex;align-items:center;gap:9px;border-left:3px solid transparent;transition:all .15s}
+.sidebar-item:hover{background:#f5f4ff;color:#6c63ff}
+.sidebar-item.active{color:#6c63ff;background:#f5f4ff;border-left-color:#6c63ff;font-weight:600}
+
+/* MAIN */
+.main{margin-left:210px;flex:1;overflow-y:auto;padding:24px}
+
+/* PAGE */
+.page{display:none}.page.active{display:block}
+.page-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.page-sub{font-size:13px;color:#888;margin-bottom:20px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat{background:#fff;border-radius:10px;padding:16px;border:1px solid #e8e8e8}
+.stat-label{font-size:11px;color:#999;margin-bottom:4px}
+.stat-value{font-size:24px;font-weight:700}
+.stat-delta{font-size:11px;color:#25d366;margin-top:3px}
+.stat-delta.red{color:#ef4444}
+
+/* CARD */
+.card{background:#fff;border-radius:12px;border:1px solid #e8e8e8;padding:20px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+
+/* BUTTON */
+.btn{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:#6c63ff;color:#fff}.btn-primary:hover{background:#5a52e0}
+.btn-green{background:#25d366;color:#fff}.btn-green:hover{background:#1ebe5a}
+.btn-fb{background:#1877f2;color:#fff;width:100%;padding:12px;font-size:14px}.btn-fb:hover{background:#1464d8}
+.btn-outline{background:#fff;color:#555;border:1px solid #ddd}.btn-outline:hover{border-color:#6c63ff;color:#6c63ff}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-red{background:#fff;color:#ef4444;border:1px solid #fecaca}.btn-red:hover{background:#fef2f2}
+
+/* EMPTY STATE */
+.empty{background:#fff;border-radius:12px;border:2px dashed #d0ceff;padding:48px;text-align:center}
+.empty-icon{width:64px;height:64px;background:#f0eeff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px}
+.empty-title{font-size:16px;font-weight:700;margin-bottom:6px}
+.empty-desc{font-size:13px;color:#888;max-width:340px;margin:0 auto 20px;line-height:1.6}
+
+/* CHANNEL CARD */
+.channel-card{background:#fff;border-radius:10px;border:1px solid #e8e8e8;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.channel-info{display:flex;align-items:center;gap:12px}
+.channel-icon{width:38px;height:38px;background:#dcfce7;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.channel-name{font-size:14px;font-weight:600}
+.channel-num{font-size:12px;color:#888;margin-top:1px}
+.badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
+.badge-green{background:#dcfce7;color:#16a34a}
+.badge-yellow{background:#fef9c3;color:#ca8a04}
+.badge-gray{background:#f3f4f6;color:#6b7280}
+
+/* MODAL OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:2000}
+.overlay.open{display:flex}
+
+/* MODAL */
+.modal{background:#fff;border-radius:14px;width:460px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;max-height:90vh;overflow-y:auto}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#999;line-height:1}
+.modal-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.modal-app-icon{width:44px;height:44px;background:#0f0f1a;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.modal-title{font-size:18px;font-weight:700}
+.modal-sub{font-size:12px;color:#888}
+.modal-desc{font-size:13px;color:#555;line-height:1.6;margin-bottom:20px}
+.step{display:flex;gap:10px;margin-bottom:12px}
+.step-num{width:22px;height:22px;background:#6c63ff;color:#fff;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-text{font-size:13px;color:#444;line-height:1.5}
+.step-text strong{color:#1a1a2e}
+.modal-note{font-size:11px;color:#aaa;text-align:center;margin-top:10px;line-height:1.5}
+
+/* META POPUP */
+.meta-popup{background:#fff;border-radius:12px;width:440px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.meta-header{background:#1877f2;padding:14px 18px;display:flex;align-items:center;gap:10px;color:#fff}
+.meta-header-logo{font-size:20px;font-weight:900}
+.meta-header-title{font-size:14px;font-weight:700}
+.meta-header-sub{font-size:11px;opacity:.8}
+.meta-body{padding:20px}
+.meta-app-row{display:flex;align-items:center;gap:10px;background:#f0f2f5;border-radius:8px;padding:12px;margin-bottom:16px}
+.meta-app-icon{width:36px;height:36px;background:#0f0f1a;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.meta-app-name{font-size:13px;font-weight:600}
+.meta-app-desc{font-size:11px;color:#888}
+.meta-perms-title{font-size:12px;font-weight:600;color:#555;margin-bottom:8px}
+.meta-perm{display:flex;align-items:center;gap:8px;font-size:12px;color:#333;margin-bottom:6px}
+.meta-perm-check{color:#25d366;font-size:14px}
+.meta-actions{display:flex;gap:8px;margin-top:16px}
+.meta-btn-cancel{flex:1;padding:10px;border-radius:6px;border:1px solid #ddd;background:#fff;font-size:13px;font-weight:600;cursor:pointer;color:#555}
+.meta-btn-accept{flex:2;padding:10px;border-radius:6px;border:none;background:#1877f2;font-size:13px;font-weight:600;cursor:pointer;color:#fff}
+
+/* SUCCESS */
+.success-box{text-align:center;padding:10px}
+.success-icon{width:70px;height:70px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:34px}
+.success-title{font-size:20px;font-weight:700;color:#16a34a;margin-bottom:6px}
+.success-desc{font-size:13px;color:#666;line-height:1.6;margin-bottom:20px}
+.data-table{background:#f8f8f8;border-radius:8px;padding:12px;text-align:left;margin-bottom:20px}
+.data-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #eee}
+.data-row:last-child{border-bottom:none}
+.data-label{color:#888}
+.data-value{font-weight:600;font-family:monospace;font-size:11px}
+
+/* CHAT */
+.chat-layout{display:grid;grid-template-columns:260px 1fr;gap:0;background:#fff;border-radius:12px;border:1px solid #e8e8e8;height:480px;overflow:hidden}
+.chat-list{border-right:1px solid #e8e8e8;overflow-y:auto}
+.chat-list-header{padding:14px;font-size:13px;font-weight:600;border-bottom:1px solid #e8e8e8;background:#f8f8f8}
+.chat-item{padding:12px 14px;cursor:pointer;border-bottom:1px solid #f0f0f0;display:flex;gap:10px;align-items:center;transition:background .1s}
+.chat-item:hover{background:#f5f4ff}
+.chat-item.active{background:#f0eeff}
+.chat-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.chat-contact-name{font-size:13px;font-weight:600}
+.chat-preview{font-size:11px;color:#888;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+.chat-time{font-size:10px;color:#bbb;margin-left:auto;flex-shrink:0}
+.chat-main{display:flex;flex-direction:column}
+.chat-header{padding:12px 16px;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;gap:10px;background:#f8f8f8}
+.chat-header-name{font-size:14px;font-weight:600}
+.chat-header-status{font-size:11px;color:#25d366}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#e5ddd5}
+.msg{max-width:70%;padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.5}
+.msg-in{background:#fff;border-radius:10px 10px 10px 2px;align-self:flex-start}
+.msg-out{background:#dcf8c6;border-radius:10px 10px 2px 10px;align-self:flex-end}
+.msg-time{font-size:10px;color:#999;margin-top:3px;text-align:right}
+.msg-auto{font-size:10px;color:#6c63ff;margin-top:2px}
+.chat-input{padding:10px 14px;border-top:1px solid #e8e8e8;display:flex;gap:8px;align-items:center;background:#f8f8f8}
+.chat-input input{flex:1;border:1px solid #e8e8e8;border-radius:20px;padding:8px 14px;font-size:13px;outline:none}
+.chat-input input:focus{border-color:#6c63ff}
+
+/* TEMPLATES */
+.template-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.template-card{background:#fff;border-radius:10px;border:1px solid #e8e8e8;padding:16px}
+.template-name{font-size:13px;font-weight:700;margin-bottom:4px}
+.template-category{font-size:11px;margin-bottom:8px}
+.template-body{font-size:12px;color:#555;background:#f8f8f8;border-radius:6px;padding:10px;line-height:1.5;margin-bottom:10px}
+.template-footer{display:flex;align-items:center;justify-content:space-between}
+
+/* EVENTS */
+.events-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.event-card{background:#fff;border-radius:10px;border:1px solid #e8e8e8;padding:16px}
+.event-icon{font-size:24px;margin-bottom:8px}
+.event-label{font-size:11px;color:#888;margin-bottom:4px}
+.event-value{font-size:22px;font-weight:700}
+.event-delta{font-size:11px;color:#25d366;margin-top:2px}
+
+/* CLIENTS */
+.clients-table{width:100%;border-collapse:collapse}
+.clients-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#888;padding:8px 12px;border-bottom:2px solid #e8e8e8}
+.clients-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.clients-table tr:last-child td{border-bottom:none}
+
+/* ALERT */
+.alert{border-radius:8px;padding:12px 16px;font-size:13px;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px}
+.alert-yellow{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.alert-green{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.alert-blue{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+
+/* BILLING */
+.billing-box{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px;font-size:13px;color:#92400e;display:flex;align-items:flex-start;gap:10px;margin-top:12px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Axarkia<span>.</span></div>
+  <div class="nav-right">
+    <span>Restaurante El Olivo S.L.</span>
+    <div class="nav-avatar">RE</div>
+  </div>
+</nav>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">Principal</div>
+    <div class="sidebar-item" onclick="goTo('dashboard')">📊 Dashboard</div>
+    <div class="sidebar-item active" onclick="goTo('canales')" id="nav-canales">💬 Canales WhatsApp</div>
+    <div class="sidebar-item" onclick="goTo('mensajes')" id="nav-mensajes">💬 Mensajes</div>
+    <div class="sidebar-item" onclick="goTo('plantillas')" id="nav-plantillas">📋 Plantillas</div>
+    <div class="sidebar-item" onclick="goTo('automatizaciones')" id="nav-automatizaciones">🤖 Automatizaciones</div>
+    <div class="sidebar-item" onclick="goTo('eventos')" id="nav-eventos">📈 Eventos</div>
+    <div class="sidebar-section">Configuración</div>
+    <div class="sidebar-item" onclick="goTo('clientes')" id="nav-clientes">👥 Mis clientes</div>
+    <div class="sidebar-item" onclick="goTo('ajustes')" id="nav-ajustes">⚙️ Ajustes</div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="page" id="page-dashboard">
+      <div class="page-title">Dashboard</div>
+      <div class="page-sub">Resumen de actividad — Últimos 30 días</div>
+      <div class="stats">
+        <div class="stat"><div class="stat-label">Mensajes enviados</div><div class="stat-value">12.847</div><div class="stat-delta">↑ 18% vs mes anterior</div></div>
+        <div class="stat"><div class="stat-label">Mensajes recibidos</div><div class="stat-value">9.203</div><div class="stat-delta">↑ 12%</div></div>
+        <div class="stat"><div class="stat-label">Tasa de respuesta</div><div class="stat-value">94%</div><div class="stat-delta">↑ 3%</div></div>
+        <div class="stat"><div class="stat-label">Conversiones</div><div class="stat-value">347</div><div class="stat-delta">↑ 22%</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Canales activos <span class="badge badge-green">1 activo</span></div>
+        <div class="channel-card">
+          <div class="channel-info">
+            <div class="channel-icon">📱</div>
+            <div><div class="channel-name">Restaurante El Olivo</div><div class="channel-num">+34 612 345 678</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="badge badge-green">Activo</span>
+            <button class="btn btn-outline btn-sm" onclick="goTo('mensajes')">Ver mensajes</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Actividad reciente</div>
+        <table class="clients-table">
+          <thead><tr><th>Tipo</th><th>Descripción</th><th>Hora</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-green">Enviado</span></td><td>Plantilla "confirmacion_reserva" → +34 699 111 222</td><td style="color:#aaa">hace 5 min</td></tr>
+            <tr><td><span class="badge badge-gray">Recibido</span></td><td>"Quiero reservar mesa para 4 personas el sábado"</td><td style="color:#aaa">hace 12 min</td></tr>
+            <tr><td><span class="badge badge-green">Auto</span></td><td>Respuesta automática enviada a +34 699 333 444</td><td style="color:#aaa">hace 18 min</td></tr>
+            <tr><td><span class="badge badge-yellow">Evento</span></td><td>Conversión registrada: reserva completada</td><td style="color:#aaa">hace 25 min</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== CANALES ===== -->
+    <div class="page active" id="page-canales">
+      <div class="page-title">Canales de WhatsApp</div>
+      <div class="page-sub">Conecta y gestiona los números de WhatsApp Business de tu negocio</div>
+
+      <div id="canales-empty">
+        <div class="empty">
+          <div class="empty-icon">📱</div>
+          <div class="empty-title">Conecta tu WhatsApp Business</div>
+          <div class="empty-desc">Vincula el número de WhatsApp de tu negocio a Axarkia para gestionar mensajes, crear automatizaciones y enviar plantillas a tus clientes.</div>
+          <button class="btn btn-green" onclick="openModal('modal-connect')">📲 Conectar WhatsApp Business</button>
+        </div>
+      </div>
+
+      <div id="canales-connected" style="display:none">
+        <div class="alert alert-green">✅ Canal conectado correctamente. Ya puedes enviar y recibir mensajes.</div>
+        <div class="channel-card">
+          <div class="channel-info">
+            <div class="channel-icon">📱</div>
+            <div><div class="channel-name">Restaurante El Olivo</div><div class="channel-num">+34 612 345 678 · WABA ID: 382910475628391</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="badge badge-green">Activo</span>
+            <button class="btn btn-outline btn-sm">Configurar</button>
+            <button class="btn btn-red btn-sm">Desconectar</button>
+          </div>
+        </div>
+        <div class="billing-box">
+          💳 Recuerda añadir un método de pago en WhatsApp Manager de Meta. El coste de los mensajes lo gestiona Meta directamente en tu cuenta. <a href="#" style="color:#1877f2;font-weight:600;margin-left:6px">Añadir ahora →</a>
+        </div>
+        <div style="margin-top:16px;text-align:right">
+          <button class="btn btn-outline" onclick="addAnotherChannel()">+ Conectar otro número</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MENSAJES ===== -->
+    <div class="page" id="page-mensajes">
+      <div class="page-title">Mensajes</div>
+      <div class="page-sub">Conversaciones activas de tu WhatsApp Business · <span class="badge badge-green">En línea</span></div>
+      <div class="chat-layout">
+        <div class="chat-list">
+          <div class="chat-list-header">💬 Conversaciones (8)</div>
+          <div class="chat-item active" onclick="selectChat(this,'María García','📩 Perfecto, hasta el sábado')">
+            <div class="chat-avatar" style="background:#6c63ff">MG</div>
+            <div style="flex:1;min-width:0">
+              <div class="chat-contact-name">María García</div>
+              <div class="chat-preview">Quiero reservar mesa para 4</div>
+            </div>
+            <div class="chat-time">10:32</div>
+          </div>
+          <div class="chat-item" onclick="selectChat(this,'Carlos Ruiz','📩 ¿Tenéis menú vegetariano?')">
+            <div class="chat-avatar" style="background:#f59e0b">CR</div>
+            <div style="flex:1;min-width:0">
+              <div class="chat-contact-name">Carlos Ruiz</div>
+              <div class="chat-preview">¿Tenéis menú vegetariano?</div>
+            </div>
+            <div class="chat-time">10:18</div>
+          </div>
+          <div class="chat-item" onclick="selectChat(this,'Empresa TechSol','📩 Necesito presupuesto para evento')">
+            <div class="chat-avatar" style="background:#10b981">ET</div>
+            <div style="flex:1;min-width:0">
+              <div class="chat-contact-name">Empresa TechSol</div>
+              <div class="chat-preview">Necesito presupuesto para evento</div>
+            </div>
+            <div class="chat-time">09:45</div>
+          </div>
+          <div class="chat-item" onclick="selectChat(this,'Ana López','🤖 [Auto] ¡Gracias por contactarnos!')">
+            <div class="chat-avatar" style="background:#ef4444">AL</div>
+            <div style="flex:1;min-width:0">
+              <div class="chat-contact-name">Ana López</div>
+              <div class="chat-preview">¿A qué hora abrís hoy?</div>
+            </div>
+            <div class="chat-time">09:12</div>
+          </div>
+        </div>
+        <div class="chat-main">
+          <div class="chat-header">
+            <div class="chat-avatar" style="background:#6c63ff;width:32px;height:32px;font-size:12px">MG</div>
+            <div><div class="chat-header-name" id="chat-name">María García</div><div class="chat-header-status">En línea · Ventana de 24h abierta</div></div>
+            <div style="margin-left:auto;display:flex;gap:8px">
+              <button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">📋 Enviar plantilla</button>
+            </div>
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            <div class="msg msg-in">Hola, ¿podría reservar una mesa para 4 personas el sábado a las 21h?<div class="msg-time">10:28</div></div>
+            <div class="msg msg-out" style="background:#d4f0ff">¡Hola! 😊 Claro, ¿para qué nombre hacemos la reserva?<div class="msg-time">10:28</div><div class="msg-auto">🤖 Respuesta automática</div></div>
+            <div class="msg msg-in">A nombre de María García, somos 4 adultos.<div class="msg-time">10:30</div></div>
+            <div class="msg msg-out">Perfecto María, te confirmo la reserva: <strong>Sábado, 4 personas, 21:00h</strong>. Recibirás una confirmación en breve. 🎉<div class="msg-time">10:31</div></div>
+          </div>
+          <div class="chat-input">
+            <input type="text" id="chat-input-field" placeholder="Escribe un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+            <button class="btn btn-green btn-sm" onclick="sendMsg()">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PLANTILLAS ===== -->
+    <div class="page" id="page-plantillas">
+      <div class="page-title">Plantillas de Mensajes</div>
+      <div class="page-sub">Gestiona las plantillas aprobadas por Meta para tu cuenta de WhatsApp Business</div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+        <button class="btn btn-primary" onclick="openModal('modal-new-template')">+ Nueva plantilla</button>
+      </div>
+      <div class="template-grid">
+        <div class="template-card">
+          <div class="template-name">confirmacion_reserva</div>
+          <div class="template-category"><span class="badge badge-green">Utilidad</span></div>
+          <div class="template-body">¡Hola {{1}}! ✅ Tu reserva ha sido confirmada para el {{2}} a las {{3}}h. ¡Te esperamos en Restaurante El Olivo!</div>
+          <div class="template-footer"><span class="badge badge-green">Aprobada</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Enviar</button><button class="btn btn-outline btn-sm">Editar</button></div></div>
+        </div>
+        <div class="template-card">
+          <div class="template-name">oferta_fin_semana</div>
+          <div class="template-category"><span class="badge" style="background:#fce7f3;color:#be185d">Marketing</span></div>
+          <div class="template-body">🌟 ¡{{1}}, este fin de semana tenemos menú especial por solo {{2}}€! Incluye entrante, principal y postre. ¿Reservas tu mesa? Responde SÍ y te llamamos.</div>
+          <div class="template-footer"><span class="badge badge-green">Aprobada</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Enviar</button><button class="btn btn-outline btn-sm">Editar</button></div></div>
+        </div>
+        <div class="template-card">
+          <div class="template-name">recordatorio_reserva</div>
+          <div class="template-category"><span class="badge badge-green">Utilidad</span></div>
+          <div class="template-body">⏰ Hola {{1}}, te recordamos que tienes una reserva mañana {{2}} a las {{3}}h para {{4}} personas. Si necesitas cancelar, responde CANCELAR.</div>
+          <div class="template-footer"><span class="badge badge-green">Aprobada</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Enviar</button><button class="btn btn-outline btn-sm">Editar</button></div></div>
+        </div>
+        <div class="template-card">
+          <div class="template-name">codigo_verificacion</div>
+          <div class="template-category"><span class="badge" style="background:#dbeafe;color:#1d4ed8">Autenticación</span></div>
+          <div class="template-body">Tu código de verificación de Axarkia es: <strong>{{1}}</strong>. Válido durante 10 minutos. No lo compartas con nadie.</div>
+          <div class="template-footer"><span class="badge badge-yellow">En revisión</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm">Ver estado</button></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== AUTOMATIZACIONES ===== -->
+    <div class="page" id="page-automatizaciones">
+      <div class="page-title">Automatizaciones</div>
+      <div class="page-sub">Flujos de respuesta automática para tu WhatsApp Business</div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+        <button class="btn btn-primary">+ Nueva automatización</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Bienvenida a nuevos contactos <span class="badge badge-green">Activa</span></div>
+        <p style="font-size:13px;color:#555;margin-bottom:12px">Se activa cuando un contacto nuevo escribe por primera vez</p>
+        <div style="background:#f8f8f8;border-radius:8px;padding:12px;font-size:13px;color:#444;line-height:1.6;margin-bottom:12px">
+          🤖 <em>"¡Hola! Soy el asistente virtual de Restaurante El Olivo. ¿En qué puedo ayudarte? Escribe:<br>1️⃣ Reservar mesa<br>2️⃣ Ver carta<br>3️⃣ Horarios y ubicación"</em>
+        </div>
+        <div style="display:flex;gap:8px">
+          <span style="font-size:12px;color:#888">Activada 847 veces este mes</span>
+          <button class="btn btn-outline btn-sm" style="margin-left:auto">Editar</button>
+          <button class="btn btn-red btn-sm">Pausar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Confirmación automática de reservas <span class="badge badge-green">Activa</span></div>
+        <p style="font-size:13px;color:#555;margin-bottom:12px">Cuando se recibe "1" o la palabra "reservar", inicia el flujo de reserva</p>
+        <div style="background:#f8f8f8;border-radius:8px;padding:12px;font-size:13px;color:#444;line-height:1.6;margin-bottom:12px">
+          🤖 <em>"¡Perfecto! Para hacer tu reserva necesito: nombre, fecha, hora y número de personas. ¿Para cuándo sería?"</em>
+        </div>
+        <div style="display:flex;gap:8px">
+          <span style="font-size:12px;color:#888">234 reservas gestionadas este mes</span>
+          <button class="btn btn-outline btn-sm" style="margin-left:auto">Editar</button>
+          <button class="btn btn-red btn-sm">Pausar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Respuesta fuera de horario <span class="badge badge-yellow">Pausada</span></div>
+        <p style="font-size:13px;color:#555;margin-bottom:12px">Activa fuera del horario de atención (22:00 - 09:00)</p>
+        <div style="background:#f8f8f8;border-radius:8px;padding:12px;font-size:13px;color:#444;line-height:1.6;margin-bottom:12px">
+          🤖 <em>"En este momento estamos cerrados. Nuestro horario es de 13:00 a 16:00 y de 20:00 a 23:00. Te responderemos en cuanto abramos 😊"</em>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-green btn-sm" style="margin-left:auto">Activar</button>
+          <button class="btn btn-outline btn-sm">Editar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== EVENTOS ===== -->
+    <div class="page" id="page-eventos">
+      <div class="page-title">Eventos y Conversiones</div>
+      <div class="page-sub">Seguimiento de conversiones registradas a través de WhatsApp Business · Últimos 30 días</div>
+      <div class="alert alert-blue">📊 Los eventos se registran automáticamente en tu cuenta de WhatsApp Business mediante el permiso <strong>whatsapp_business_manage_events</strong>, lo que permite medir el ROI de tus campañas de mensajería.</div>
+      <div class="events-grid">
+        <div class="event-card"><div class="event-icon">🛒</div><div class="event-label">Reservas completadas</div><div class="event-value">347</div><div class="event-delta">↑ 22% vs mes anterior</div></div>
+        <div class="event-card"><div class="event-icon">👀</div><div class="event-label">Vistas de carta</div><div class="event-value">1.204</div><div class="event-delta">↑ 8%</div></div>
+        <div class="event-card"><div class="event-icon">📞</div><div class="event-label">Contactos nuevos</div><div class="event-value">892</div><div class="event-delta">↑ 15%</div></div>
+        <div class="event-card"><div class="event-icon">💬</div><div class="event-label">Conversaciones iniciadas</div><div class="event-value">2.341</div><div class="event-delta">↑ 18%</div></div>
+        <div class="event-card"><div class="event-icon">✅</div><div class="event-label">Tasa de conversión</div><div class="event-value">14.8%</div><div class="event-delta">↑ 2.3%</div></div>
+        <div class="event-card"><div class="event-icon">💰</div><div class="event-label">Valor estimado</div><div class="event-value">€8.420</div><div class="event-delta">↑ 31%</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Eventos recientes</div>
+        <table class="clients-table">
+          <thead><tr><th>Evento</th><th>Contacto</th><th>Canal</th><th>Valor</th><th>Fecha</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-green">reserva_completada</span></td><td>+34 699 111 222</td><td>Restaurante El Olivo</td><td>€48</td><td style="color:#aaa">hace 5 min</td></tr>
+            <tr><td><span class="badge" style="background:#dbeafe;color:#1d4ed8">contacto_nuevo</span></td><td>+34 611 333 444</td><td>Restaurante El Olivo</td><td>—</td><td style="color:#aaa">hace 12 min</td></tr>
+            <tr><td><span class="badge badge-green">reserva_completada</span></td><td>+34 622 555 666</td><td>Restaurante El Olivo</td><td>€72</td><td style="color:#aaa">hace 28 min</td></tr>
+            <tr><td><span class="badge badge-yellow">vista_carta</span></td><td>+34 677 888 999</td><td>Restaurante El Olivo</td><td>—</td><td style="color:#aaa">hace 45 min</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== CLIENTES ===== -->
+    <div class="page" id="page-clientes">
+      <div class="page-title">Clientes registrados</div>
+      <div class="page-sub">Negocios conectados a través del Registro Insertado · Gestionados mediante <strong>manage_app_solution</strong></div>
+      <div class="alert alert-blue">🔗 Axarkia gestiona múltiples cuentas de WhatsApp Business en nombre de distintos clientes. Cada cliente autorizó el acceso mediante el proceso de Registro Insertado de Meta.</div>
+      <div class="card">
+        <table class="clients-table">
+          <thead><tr><th>Negocio</th><th>WABA ID</th><th>Número</th><th>Estado</th><th>Mensajes/mes</th><th>Acciones</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Restaurante El Olivo</strong><div style="font-size:11px;color:#888">Hostelería</div></td>
+              <td style="font-family:monospace;font-size:11px">382910475628391</td>
+              <td>+34 612 345 678</td>
+              <td><span class="badge badge-green">Activo</span></td>
+              <td>12.847</td>
+              <td><button class="btn btn-outline btn-sm">Gestionar</button></td>
+            </tr>
+            <tr>
+              <td><strong>Clínica Dental Sonrisa</strong><div style="font-size:11px;color:#888">Salud</div></td>
+              <td style="font-family:monospace;font-size:11px">294817362918473</td>
+              <td>+34 934 567 890</td>
+              <td><span class="badge badge-green">Activo</span></td>
+              <td>4.231</td>
+              <td><button class="btn btn-outline btn-sm">Gestionar</button></td>
+            </tr>
+            <tr>
+              <td><strong>Academia Drive Fast</strong><div style="font-size:11px;color:#888">Educación</div></td>
+              <td style="font-family:monospace;font-size:11px">573829104756283</td>
+              <td>+34 654 321 987</td>
+              <td><span class="badge badge-yellow">Pendiente pago</span></td>
+              <td>891</td>
+              <td><button class="btn btn-outline btn-sm">Gestionar</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== AJUSTES ===== -->
+    <div class="page" id="page-ajustes">
+      <div class="page-title">Ajustes de la cuenta</div>
+      <div class="page-sub">Configuración de tu perfil y conexiones</div>
+      <div class="card">
+        <div class="card-title">Perfil del negocio</div>
+        <div style="display:grid;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:12px;color:#888">Nombre del negocio</label><input style="border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="Restaurante El Olivo S.L."/></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:12px;color:#888">Email de contacto</label><input style="border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="info@restauranteelolivo.com"/></div>
+        </div>
+        <div style="margin-top:16px;text-align:right"><button class="btn btn-primary btn-sm">Guardar cambios</button></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Canal de WhatsApp conectado</div>
+        <div class="channel-card">
+          <div class="channel-info">
+            <div class="channel-icon">📱</div>
+            <div><div class="channel-name">+34 612 345 678</div><div class="channel-num">WABA ID: 382910475628391</div></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <span class="badge badge-green">Activo</span>
+            <button class="btn btn-red btn-sm">Desconectar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ===== MODAL: CONNECT WHATSAPP ===== -->
+<div class="overlay" id="modal-connect">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-connect')">×</button>
+    <div id="modal-step-1">
+      <div class="modal-header">
+        <div class="modal-app-icon">🤖</div>
+        <div><div class="modal-title">Conectar WhatsApp Business</div><div class="modal-sub">Proceso oficial de Meta · 4 pasos</div></div>
+      </div>
+      <div class="modal-desc">Usaremos el proceso oficial de Meta (Embedded Signup). Solo necesitas tu cuenta de Facebook del negocio y el número que quieres usar.</div>
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Autentícate con Facebook</strong> — usaremos tu cuenta de negocio de Meta.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Selecciona o crea tu WABA</strong> — puedes usar una cuenta existente o crear una nueva.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Verifica tu número</strong> — recibirás un código SMS o llamada.</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Añade método de pago</strong> — Meta factura los mensajes directamente a tu cuenta.</div></div>
+      <div style="margin-top:20px">
+        <button class="btn btn-fb" onclick="showStep(2)">f &nbsp; Continuar con Facebook</button>
+      </div>
+      <div class="modal-note">Tus activos de WhatsApp son siempre tuyos. Axarkia solo gestiona el acceso para enviarte mensajes en tu nombre.</div>
+    </div>
+    <div id="modal-step-2" style="display:none">
+      <div class="meta-popup" style="width:100%;box-shadow:none">
+        <div class="meta-header">
+          <div class="meta-header-logo">f</div>
+          <div><div class="meta-header-title">Inicio de sesión con Facebook</div><div class="meta-header-sub">Axarkia quiere acceder a tu cuenta</div></div>
+        </div>
+        <div class="meta-body">
+          <div class="meta-app-row">
+            <div class="meta-app-icon">🤖</div>
+            <div><div class="meta-app-name">Axarkia</div><div class="meta-app-desc">Plataforma de mensajería automatizada con WhatsApp</div></div>
+          </div>
+          <div class="meta-perms-title">Axarkia recibirá acceso a:</div>
+          <div class="meta-perm"><span class="meta-perm-check">✓</span> Gestionar tu cuenta de WhatsApp Business (WABA)</div>
+          <div class="meta-perm"><span class="meta-perm-check">✓</span> Enviar y recibir mensajes en tu nombre</div>
+          <div class="meta-perm"><span class="meta-perm-check">✓</span> Gestionar plantillas de mensajes</div>
+          <div class="meta-perm"><span class="meta-perm-check">✓</span> Registrar conversiones y eventos de negocio</div>
+          <div class="meta-perm"><span class="meta-perm-check">✓</span> Acceder a la configuración del número de teléfono</div>
+          <div class="meta-actions">
+            <button class="meta-btn-cancel" onclick="closeModal('modal-connect')">Cancelar</button>
+            <button class="meta-btn-accept" onclick="showStep(3)">Continuar como empresa →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="modal-step-3" style="display:none">
+      <div class="success-box">
+        <div class="success-icon">✅</div>
+        <div class="success-title">¡WhatsApp conectado!</div>
+        <div class="success-desc">Tu número de WhatsApp Business se ha vinculado correctamente a Axarkia. Ya puedes gestionar mensajes, plantillas y automatizaciones.</div>
+        <div class="data-table">
+          <div class="data-row"><span class="data-label">Número</span><span class="data-value">+34 612 345 678</span></div>
+          <div class="data-row"><span class="data-label">Nombre visible</span><span class="data-value">Restaurante El Olivo</span></div>
+          <div class="data-row"><span class="data-label">WABA ID</span><span class="data-value">382910475628391</span></div>
+          <div class="data-row"><span class="data-label">Phone Number ID</span><span class="data-value">109876543210123</span></div>
+          <div class="data-row"><span class="data-label">Estado</span><span class="data-value" style="color:#16a34a">Activo ✓</span></div>
+        </div>
+        <button class="btn btn-green" style="width:100%" onclick="completeConnect()">Ir a Mensajes →</button>
+        <div class="billing-box" style="margin-top:14px;text-align:left">
+          💳 Añade un método de pago en WhatsApp Manager de Meta para poder enviar mensajes. El coste lo gestiona Meta directamente.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: SEND TEMPLATE ===== -->
+<div class="overlay" id="modal-template-send">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-template-send')">×</button>
+    <div class="modal-title" style="margin-bottom:16px">📋 Enviar plantilla</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Plantilla</label>
+        <select style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px">
+          <option>confirmacion_reserva (Utilidad)</option>
+          <option>oferta_fin_semana (Marketing)</option>
+          <option>recordatorio_reserva (Utilidad)</option>
+        </select>
+      </div>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Destinatario</label>
+        <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="+34 699 111 222"/>
+      </div>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Variable {{1}} — Nombre</label>
+        <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="María"/>
+      </div>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Vista previa</label>
+        <div style="background:#dcf8c6;border-radius:8px;padding:12px;font-size:13px;color:#333;line-height:1.6">¡Hola María! ✅ Tu reserva ha sido confirmada para el sábado a las 21:00h. ¡Te esperamos en Restaurante El Olivo!</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:20px">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal('modal-template-send')">Cancelar</button>
+      <button class="btn btn-green" style="flex:2" onclick="closeModal('modal-template-send')">📤 Enviar plantilla</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: NEW TEMPLATE ===== -->
+<div class="overlay" id="modal-new-template">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-new-template')">×</button>
+    <div class="modal-title" style="margin-bottom:16px">+ Nueva plantilla</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Nombre (sin espacios)</label>
+        <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" placeholder="ej: promo_verano_2026"/>
+      </div>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Categoría</label>
+        <select style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px">
+          <option>Marketing</option><option>Utilidad</option><option>Autenticación</option>
+        </select>
+      </div>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Idioma</label>
+        <select style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px">
+          <option>Español (España)</option><option>Inglés</option>
+        </select>
+      </div>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Cuerpo del mensaje</label>
+        <textarea style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px;height:90px" placeholder="Usa {{1}}, {{2}} para variables..."></textarea>
+      </div>
+    </div>
+    <div class="alert alert-yellow" style="margin-top:12px">⏳ Las plantillas nuevas deben ser aprobadas por Meta antes de poder usarse. El proceso suele tardar entre 1 y 24 horas.</div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal('modal-new-template')">Cancelar</button>
+      <button class="btn btn-primary" style="flex:2" onclick="closeModal('modal-new-template')">Enviar a revisión Meta →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// NAVIGATION
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const nav = document.getElementById('nav-' + page);
+  if (nav) nav.classList.add('active');
+}
+
+// MODALS
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  if (id === 'modal-connect') showStep(1);
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+// CONNECT FLOW STEPS
+function showStep(n) {
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById('modal-step-' + i);
+    if (el) el.style.display = n === i ? 'block' : 'none';
+  }
+}
+function completeConnect() {
+  closeModal('modal-connect');
+  document.getElementById('canales-empty').style.display = 'none';
+  document.getElementById('canales-connected').style.display = 'block';
+  goTo('mensajes');
+}
+function addAnotherChannel() { openModal('modal-connect'); }
+
+// CHAT
+function selectChat(el, name) {
+  document.querySelectorAll('.chat-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('chat-name').textContent = name;
+}
+function sendMsg() {
+  const input = document.getElementById('chat-input-field');
+  const text = input.value.trim();
+  if (!text) return;
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg msg-out';
+  div.innerHTML = text + '<div class="msg-time">' + new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}) + '</div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  input.value = '';
+}
+
+// DEFAULT PAGE
+goTo('canales');
+</script>
+</body>
+</html>
