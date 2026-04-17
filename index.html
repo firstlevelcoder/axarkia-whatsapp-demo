@@ -1,24 +1,40 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Axarkia — Plataforma de WhatsApp Business</title>
+<title>Axarkia — WhatsApp Business Platform (Meta App Review Demo)</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a2e;height:100vh;overflow:hidden}
 
+/* META REVIEW BANNER */
+.meta-review-banner{background:linear-gradient(135deg,#1877f2,#0d5bbd);color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:3000;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.meta-review-banner h3{font-size:14px;font-weight:700;margin-bottom:2px}
+.meta-review-banner p{font-size:11px;opacity:.9}
+.meta-review-banner .badge-demo{background:#fff;color:#1877f2;font-size:11px;font-weight:700;padding:6px 12px;border-radius:20px}
+.demo-step-indicator{background:rgba(255,255,255,.15);border-radius:8px;padding:8px 14px;display:flex;align-items:center;gap:12px}
+.demo-step-num{background:#fff;color:#1877f2;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.demo-step-text{font-size:12px}
+
+/* TOOLTIP ANNOTATIONS */
+.tooltip-annotation{position:absolute;background:#1877f2;color:#fff;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;box-shadow:0 4px 15px rgba(0,0,0,.2);z-index:2500;animation:pulse 2s infinite}
+.tooltip-annotation::after{content:'';position:absolute;border:8px solid transparent}
+.tooltip-annotation.arrow-down::after{top:100%;left:50%;transform:translateX(-50%);border-top-color:#1877f2}
+.tooltip-annotation.arrow-left::after{top:50%;right:100%;transform:translateY(-50%);border-right-color:#1877f2}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+
 /* NAV */
-.nav{background:#0f0f1a;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:fixed;top:0;left:0;right:0;z-index:1000}
+.nav{background:#0f0f1a;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:fixed;top:48px;left:0;right:0;z-index:1000}
 .nav-logo{font-size:18px;font-weight:700;color:#fff}.nav-logo span{color:#6c63ff}
 .nav-right{display:flex;align-items:center;gap:10px;color:#aaa;font-size:13px}
 .nav-avatar{width:30px;height:30px;background:#6c63ff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
 
 /* LAYOUT */
-.layout{display:flex;padding-top:56px;height:100vh}
+.layout{display:flex;padding-top:104px;height:100vh}
 
 /* SIDEBAR */
-.sidebar{width:210px;background:#fff;border-right:1px solid #e8e8e8;padding:16px 0;position:fixed;top:56px;bottom:0;overflow-y:auto}
+.sidebar{width:210px;background:#fff;border-right:1px solid #e8e8e8;padding:16px 0;position:fixed;top:104px;bottom:0;overflow-y:auto}
 .sidebar-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#bbb;padding:12px 18px 4px}
 .sidebar-item{padding:9px 18px;font-size:13px;color:#666;cursor:pointer;display:flex;align-items:center;gap:9px;border-left:3px solid transparent;transition:all .15s}
 .sidebar-item:hover{background:#f5f4ff;color:#6c63ff}
@@ -172,9 +188,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 /* BILLING */
 .billing-box{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px;font-size:13px;color:#92400e;display:flex;align-items:flex-start;gap:10px;margin-top:12px}
+
+/* USE CASE HIGHLIGHT */
+.use-case-highlight{border:3px solid #1877f2;border-radius:14px;position:relative}
+.use-case-label{position:absolute;top:-12px;left:20px;background:#1877f2;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:10px;z-index:10}
+
+/* DEMO NARRATION */
+.demo-narration{background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#1e40af}
+.demo-narration strong{color:#1d4ed8}
+.demo-narration::before{content:'🎬 ';font-size:14px}
 </style>
 </head>
 <body>
+
+<!-- META APP REVIEW BANNER - English for Meta reviewers -->
+<div class="meta-review-banner">
+  <div>
+    <h3>📋 Meta App Review Demo — Axarkia WhatsApp Business Platform</h3>
+    <p>This video demonstrates our complete use case for whatsapp_business_messaging and whatsapp_business_management permissions</p>
+  </div>
+  <div class="demo-step-indicator">
+    <div class="demo-step-num" id="current-step">1</div>
+    <div class="demo-step-text" id="current-step-text">Embedded Signup Flow</div>
+  </div>
+  <div class="badge-demo">SERVER-TO-SERVER APP</div>
+</div>
 
 <!-- NAV -->
 <nav class="nav">
@@ -188,16 +226,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="layout">
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sidebar-section">Principal</div>
+    <div class="sidebar-section">Main</div>
     <div class="sidebar-item" onclick="goTo('dashboard')">📊 Dashboard</div>
-    <div class="sidebar-item active" onclick="goTo('canales')" id="nav-canales">💬 Canales WhatsApp</div>
-    <div class="sidebar-item" onclick="goTo('mensajes')" id="nav-mensajes">💬 Mensajes</div>
-    <div class="sidebar-item" onclick="goTo('plantillas')" id="nav-plantillas">📋 Plantillas</div>
-    <div class="sidebar-item" onclick="goTo('automatizaciones')" id="nav-automatizaciones">🤖 Automatizaciones</div>
-    <div class="sidebar-item" onclick="goTo('eventos')" id="nav-eventos">📈 Eventos</div>
-    <div class="sidebar-section">Configuración</div>
-    <div class="sidebar-item" onclick="goTo('clientes')" id="nav-clientes">👥 Mis clientes</div>
-    <div class="sidebar-item" onclick="goTo('ajustes')" id="nav-ajustes">⚙️ Ajustes</div>
+    <div class="sidebar-item active" onclick="goTo('canales')" id="nav-canales">💬 WhatsApp Channels</div>
+    <div class="sidebar-item" onclick="goTo('mensajes')" id="nav-mensajes">💬 Messages</div>
+    <div class="sidebar-item" onclick="goTo('plantillas')" id="nav-plantillas">📋 Templates</div>
+    <div class="sidebar-item" onclick="goTo('automatizaciones')" id="nav-automatizaciones">🤖 Automations</div>
+    <div class="sidebar-item" onclick="goTo('eventos')" id="nav-eventos">📈 Events</div>
+    <div class="sidebar-section">Settings</div>
+    <div class="sidebar-item" onclick="goTo('clientes')" id="nav-clientes">👥 My Clients</div>
+    <div class="sidebar-item" onclick="goTo('ajustes')" id="nav-ajustes">⚙️ Settings</div>
   </aside>
 
   <main class="main">
@@ -241,76 +279,89 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- ===== CANALES ===== -->
     <div class="page active" id="page-canales">
-      <div class="page-title">Canales de WhatsApp</div>
-      <div class="page-sub">Conecta y gestiona los números de WhatsApp Business de tu negocio</div>
+      <div class="page-title">WhatsApp Channels</div>
+      <div class="page-sub">Connect and manage your business WhatsApp numbers via Meta Embedded Signup</div>
+
+      <!-- DEMO NARRATION FOR META REVIEWERS -->
+      <div class="demo-narration" id="narration-canales">
+        <strong>Step 1 - Embedded Signup:</strong> Business users click "Connect WhatsApp Business" to start the official Meta Embedded Signup flow. This grants us access to their WABA via <code>whatsapp_business_management</code> permission.
+      </div>
 
       <div id="canales-empty">
-        <div class="empty">
+        <div class="empty use-case-highlight">
+          <div class="use-case-label">USE CASE: whatsapp_business_management</div>
           <div class="empty-icon">📱</div>
-          <div class="empty-title">Conecta tu WhatsApp Business</div>
-          <div class="empty-desc">Vincula el número de WhatsApp de tu negocio a Axarkia para gestionar mensajes, crear automatizaciones y enviar plantillas a tus clientes.</div>
-          <button class="btn btn-green" onclick="openModal('modal-connect')">📲 Conectar WhatsApp Business</button>
+          <div class="empty-title">Connect Your WhatsApp Business</div>
+          <div class="empty-desc">Link your business WhatsApp number to Axarkia to manage messages, create automations, and send templates to your customers using Meta's official Embedded Signup.</div>
+          <button class="btn btn-green" onclick="openModal('modal-connect')" id="btn-connect-wa">📲 Connect WhatsApp Business</button>
         </div>
       </div>
 
       <div id="canales-connected" style="display:none">
-        <div class="alert alert-green">✅ Canal conectado correctamente. Ya puedes enviar y recibir mensajes.</div>
+        <div class="alert alert-green">✅ Channel connected successfully. You can now send and receive messages.</div>
         <div class="channel-card">
           <div class="channel-info">
             <div class="channel-icon">📱</div>
             <div><div class="channel-name">Restaurante El Olivo</div><div class="channel-num">+34 612 345 678 · WABA ID: 382910475628391</div></div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="badge badge-green">Activo</span>
-            <button class="btn btn-outline btn-sm">Configurar</button>
-            <button class="btn btn-red btn-sm">Desconectar</button>
+            <span class="badge badge-green">Active</span>
+            <button class="btn btn-outline btn-sm">Configure</button>
+            <button class="btn btn-red btn-sm">Disconnect</button>
           </div>
         </div>
         <div class="billing-box">
-          💳 Recuerda añadir un método de pago en WhatsApp Manager de Meta. El coste de los mensajes lo gestiona Meta directamente en tu cuenta. <a href="#" style="color:#1877f2;font-weight:600;margin-left:6px">Añadir ahora →</a>
+          💳 Remember to add a payment method in Meta's WhatsApp Manager. Message costs are billed directly by Meta to your account. <a href="#" style="color:#1877f2;font-weight:600;margin-left:6px">Add now →</a>
         </div>
         <div style="margin-top:16px;text-align:right">
-          <button class="btn btn-outline" onclick="addAnotherChannel()">+ Conectar otro número</button>
+          <button class="btn btn-outline" onclick="addAnotherChannel()">+ Connect another number</button>
         </div>
       </div>
     </div>
 
     <!-- ===== MENSAJES ===== -->
     <div class="page" id="page-mensajes">
-      <div class="page-title">Mensajes</div>
-      <div class="page-sub">Conversaciones activas de tu WhatsApp Business · <span class="badge badge-green">En línea</span></div>
-      <div class="chat-layout">
+      <div class="page-title">Messages</div>
+      <div class="page-sub">Active conversations on your WhatsApp Business · <span class="badge badge-green">Online</span></div>
+      
+      <!-- DEMO NARRATION FOR META REVIEWERS -->
+      <div class="demo-narration" id="narration-mensajes">
+        <strong>Step 2 - Messaging (whatsapp_business_messaging):</strong> This shows our core use case — sending and receiving WhatsApp messages on behalf of the connected business. We use this permission to manage real-time conversations.
+      </div>
+
+      <div class="chat-layout use-case-highlight">
+        <div class="use-case-label">USE CASE: whatsapp_business_messaging</div>
         <div class="chat-list">
-          <div class="chat-list-header">💬 Conversaciones (8)</div>
-          <div class="chat-item active" onclick="selectChat(this,'María García','📩 Perfecto, hasta el sábado')">
+          <div class="chat-list-header">💬 Conversations (8)</div>
+          <div class="chat-item active" onclick="selectChat(this,'María García','📩 Perfect, see you Saturday')">
             <div class="chat-avatar" style="background:#6c63ff">MG</div>
             <div style="flex:1;min-width:0">
               <div class="chat-contact-name">María García</div>
-              <div class="chat-preview">Quiero reservar mesa para 4</div>
+              <div class="chat-preview">I want to book a table for 4</div>
             </div>
             <div class="chat-time">10:32</div>
           </div>
-          <div class="chat-item" onclick="selectChat(this,'Carlos Ruiz','📩 ¿Tenéis menú vegetariano?')">
+          <div class="chat-item" onclick="selectChat(this,'Carlos Ruiz','📩 Do you have vegetarian menu?')">
             <div class="chat-avatar" style="background:#f59e0b">CR</div>
             <div style="flex:1;min-width:0">
               <div class="chat-contact-name">Carlos Ruiz</div>
-              <div class="chat-preview">¿Tenéis menú vegetariano?</div>
+              <div class="chat-preview">Do you have vegetarian menu?</div>
             </div>
             <div class="chat-time">10:18</div>
           </div>
-          <div class="chat-item" onclick="selectChat(this,'Empresa TechSol','📩 Necesito presupuesto para evento')">
+          <div class="chat-item" onclick="selectChat(this,'TechSol Company','📩 Need quote for event')">
             <div class="chat-avatar" style="background:#10b981">ET</div>
             <div style="flex:1;min-width:0">
-              <div class="chat-contact-name">Empresa TechSol</div>
-              <div class="chat-preview">Necesito presupuesto para evento</div>
+              <div class="chat-contact-name">TechSol Company</div>
+              <div class="chat-preview">Need quote for corporate event</div>
             </div>
             <div class="chat-time">09:45</div>
           </div>
-          <div class="chat-item" onclick="selectChat(this,'Ana López','🤖 [Auto] ¡Gracias por contactarnos!')">
+          <div class="chat-item" onclick="selectChat(this,'Ana López','🤖 [Auto] Thanks for contacting us!')">
             <div class="chat-avatar" style="background:#ef4444">AL</div>
             <div style="flex:1;min-width:0">
               <div class="chat-contact-name">Ana López</div>
-              <div class="chat-preview">¿A qué hora abrís hoy?</div>
+              <div class="chat-preview">What time do you open today?</div>
             </div>
             <div class="chat-time">09:12</div>
           </div>
@@ -318,20 +369,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="chat-main">
           <div class="chat-header">
             <div class="chat-avatar" style="background:#6c63ff;width:32px;height:32px;font-size:12px">MG</div>
-            <div><div class="chat-header-name" id="chat-name">María García</div><div class="chat-header-status">En línea · Ventana de 24h abierta</div></div>
+            <div><div class="chat-header-name" id="chat-name">María García</div><div class="chat-header-status">Online · 24h conversation window open</div></div>
             <div style="margin-left:auto;display:flex;gap:8px">
-              <button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">📋 Enviar plantilla</button>
+              <button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">📋 Send template</button>
             </div>
           </div>
           <div class="chat-messages" id="chat-messages">
-            <div class="msg msg-in">Hola, ¿podría reservar una mesa para 4 personas el sábado a las 21h?<div class="msg-time">10:28</div></div>
-            <div class="msg msg-out" style="background:#d4f0ff">¡Hola! 😊 Claro, ¿para qué nombre hacemos la reserva?<div class="msg-time">10:28</div><div class="msg-auto">🤖 Respuesta automática</div></div>
-            <div class="msg msg-in">A nombre de María García, somos 4 adultos.<div class="msg-time">10:30</div></div>
-            <div class="msg msg-out">Perfecto María, te confirmo la reserva: <strong>Sábado, 4 personas, 21:00h</strong>. Recibirás una confirmación en breve. 🎉<div class="msg-time">10:31</div></div>
+            <div class="msg msg-in">Hi, could I book a table for 4 people on Saturday at 9pm?<div class="msg-time">10:28</div></div>
+            <div class="msg msg-out" style="background:#d4f0ff">Hello! 😊 Of course, what name should we put the reservation under?<div class="msg-time">10:28</div><div class="msg-auto">🤖 Automatic reply (whatsapp_business_messaging)</div></div>
+            <div class="msg msg-in">Under María García, we are 4 adults.<div class="msg-time">10:30</div></div>
+            <div class="msg msg-out">Perfect María, I confirm your reservation: <strong>Saturday, 4 people, 9:00pm</strong>. You'll receive a confirmation shortly. 🎉<div class="msg-time">10:31</div></div>
           </div>
           <div class="chat-input">
-            <input type="text" id="chat-input-field" placeholder="Escribe un mensaje..." onkeydown="if(event.key==='Enter')sendMsg()"/>
-            <button class="btn btn-green btn-sm" onclick="sendMsg()">Enviar</button>
+            <input type="text" id="chat-input-field" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+            <button class="btn btn-green btn-sm" onclick="sendMsg()">Send</button>
           </div>
         </div>
       </div>
@@ -339,35 +390,42 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- ===== PLANTILLAS ===== -->
     <div class="page" id="page-plantillas">
-      <div class="page-title">Plantillas de Mensajes</div>
-      <div class="page-sub">Gestiona las plantillas aprobadas por Meta para tu cuenta de WhatsApp Business</div>
-      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
-        <button class="btn btn-primary" onclick="openModal('modal-new-template')">+ Nueva plantilla</button>
+      <div class="page-title">Message Templates</div>
+      <div class="page-sub">Manage Meta-approved templates for your WhatsApp Business account</div>
+      
+      <!-- DEMO NARRATION FOR META REVIEWERS -->
+      <div class="demo-narration" id="narration-plantillas">
+        <strong>Step 3 - Template Management (whatsapp_business_management):</strong> We use this permission to create, edit, and manage message templates on behalf of our clients. Templates must be approved by Meta before use.
       </div>
-      <div class="template-grid">
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+        <button class="btn btn-primary" onclick="openModal('modal-new-template')">+ New Template</button>
+      </div>
+      <div class="template-grid use-case-highlight" style="padding:16px">
+        <div class="use-case-label">USE CASE: whatsapp_business_management (Templates)</div>
         <div class="template-card">
-          <div class="template-name">confirmacion_reserva</div>
-          <div class="template-category"><span class="badge badge-green">Utilidad</span></div>
-          <div class="template-body">¡Hola {{1}}! ✅ Tu reserva ha sido confirmada para el {{2}} a las {{3}}h. ¡Te esperamos en Restaurante El Olivo!</div>
-          <div class="template-footer"><span class="badge badge-green">Aprobada</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Enviar</button><button class="btn btn-outline btn-sm">Editar</button></div></div>
+          <div class="template-name">booking_confirmation</div>
+          <div class="template-category"><span class="badge badge-green">Utility</span></div>
+          <div class="template-body">Hello {{1}}! ✅ Your reservation has been confirmed for {{2}} at {{3}}. We look forward to seeing you at Restaurante El Olivo!</div>
+          <div class="template-footer"><span class="badge badge-green">Approved</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Send</button><button class="btn btn-outline btn-sm">Edit</button></div></div>
         </div>
         <div class="template-card">
-          <div class="template-name">oferta_fin_semana</div>
+          <div class="template-name">weekend_offer</div>
           <div class="template-category"><span class="badge" style="background:#fce7f3;color:#be185d">Marketing</span></div>
-          <div class="template-body">🌟 ¡{{1}}, este fin de semana tenemos menú especial por solo {{2}}€! Incluye entrante, principal y postre. ¿Reservas tu mesa? Responde SÍ y te llamamos.</div>
-          <div class="template-footer"><span class="badge badge-green">Aprobada</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Enviar</button><button class="btn btn-outline btn-sm">Editar</button></div></div>
+          <div class="template-body">🌟 {{1}}, this weekend we have a special menu for only {{2}}€! Includes starter, main course and dessert. Book your table? Reply YES and we'll call you.</div>
+          <div class="template-footer"><span class="badge badge-green">Approved</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Send</button><button class="btn btn-outline btn-sm">Edit</button></div></div>
         </div>
         <div class="template-card">
-          <div class="template-name">recordatorio_reserva</div>
-          <div class="template-category"><span class="badge badge-green">Utilidad</span></div>
-          <div class="template-body">⏰ Hola {{1}}, te recordamos que tienes una reserva mañana {{2}} a las {{3}}h para {{4}} personas. Si necesitas cancelar, responde CANCELAR.</div>
-          <div class="template-footer"><span class="badge badge-green">Aprobada</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Enviar</button><button class="btn btn-outline btn-sm">Editar</button></div></div>
+          <div class="template-name">booking_reminder</div>
+          <div class="template-category"><span class="badge badge-green">Utility</span></div>
+          <div class="template-body">⏰ Hi {{1}}, reminder that you have a reservation tomorrow {{2}} at {{3}} for {{4}} people. If you need to cancel, reply CANCEL.</div>
+          <div class="template-footer"><span class="badge badge-green">Approved</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Send</button><button class="btn btn-outline btn-sm">Edit</button></div></div>
         </div>
         <div class="template-card">
-          <div class="template-name">codigo_verificacion</div>
-          <div class="template-category"><span class="badge" style="background:#dbeafe;color:#1d4ed8">Autenticación</span></div>
-          <div class="template-body">Tu código de verificación de Axarkia es: <strong>{{1}}</strong>. Válido durante 10 minutos. No lo compartas con nadie.</div>
-          <div class="template-footer"><span class="badge badge-yellow">En revisión</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm">Ver estado</button></div></div>
+          <div class="template-name">verification_code</div>
+          <div class="template-category"><span class="badge" style="background:#dbeafe;color:#1d4ed8">Authentication</span></div>
+          <div class="template-body">Your Axarkia verification code is: <strong>{{1}}</strong>. Valid for 10 minutes. Do not share it with anyone.</div>
+          <div class="template-footer"><span class="badge badge-yellow">Under review</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm">Check status</button></div></div>
         </div>
       </div>
     </div>
@@ -513,62 +571,130 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <!-- ===== MODAL: CONNECT WHATSAPP ===== -->
 <div class="overlay" id="modal-connect">
-  <div class="modal">
+  <div class="modal" style="width:520px">
     <button class="modal-close" onclick="closeModal('modal-connect')">×</button>
+    
+    <!-- STEP 1: INTRODUCTION -->
     <div id="modal-step-1">
+      <div style="background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#0369a1">
+        🎬 <strong>FOR META REVIEWERS:</strong> This is the Embedded Signup flow. We use the official Meta JavaScript SDK to authenticate businesses and obtain WABA access.
+      </div>
       <div class="modal-header">
         <div class="modal-app-icon">🤖</div>
-        <div><div class="modal-title">Conectar WhatsApp Business</div><div class="modal-sub">Proceso oficial de Meta · 4 pasos</div></div>
+        <div><div class="modal-title">Connect WhatsApp Business</div><div class="modal-sub">Official Meta Embedded Signup · 4 steps</div></div>
       </div>
-      <div class="modal-desc">Usaremos el proceso oficial de Meta (Embedded Signup). Solo necesitas tu cuenta de Facebook del negocio y el número que quieres usar.</div>
-      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Autentícate con Facebook</strong> — usaremos tu cuenta de negocio de Meta.</div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Selecciona o crea tu WABA</strong> — puedes usar una cuenta existente o crear una nueva.</div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Verifica tu número</strong> — recibirás un código SMS o llamada.</div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Añade método de pago</strong> — Meta factura los mensajes directamente a tu cuenta.</div></div>
+      <div class="modal-desc">We use Meta's official Embedded Signup process. You only need your business Facebook account and the phone number you want to use for WhatsApp Business.</div>
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Authenticate with Facebook</strong> — Log in with your Meta business account.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Select or create your WABA</strong> — Use an existing account or create a new one.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Verify your phone number</strong> — Receive verification via SMS or call.</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Add payment method</strong> — Meta bills messages directly to your account.</div></div>
       <div style="margin-top:20px">
-        <button class="btn btn-fb" onclick="showStep(2)">f &nbsp; Continuar con Facebook</button>
+        <button class="btn btn-fb" onclick="showStep(2)">f &nbsp; Continue with Facebook</button>
       </div>
-      <div class="modal-note">Tus activos de WhatsApp son siempre tuyos. Axarkia solo gestiona el acceso para enviarte mensajes en tu nombre.</div>
+      <div class="modal-note">Your WhatsApp Business assets always belong to you. Axarkia only manages access to send messages on your behalf using <strong>whatsapp_business_management</strong> and <strong>whatsapp_business_messaging</strong> permissions.</div>
     </div>
+    
+    <!-- STEP 2: META LOGIN SIMULATION -->
     <div id="modal-step-2" style="display:none">
+      <div style="background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#0369a1">
+        🎬 <strong>FOR META REVIEWERS:</strong> This simulates the Facebook Login dialog. In production, this is handled by the official Meta JavaScript SDK (FB.login).
+      </div>
       <div class="meta-popup" style="width:100%;box-shadow:none">
         <div class="meta-header">
           <div class="meta-header-logo">f</div>
-          <div><div class="meta-header-title">Inicio de sesión con Facebook</div><div class="meta-header-sub">Axarkia quiere acceder a tu cuenta</div></div>
+          <div><div class="meta-header-title">Log in with Facebook</div><div class="meta-header-sub">Axarkia wants to access your account</div></div>
         </div>
         <div class="meta-body">
           <div class="meta-app-row">
             <div class="meta-app-icon">🤖</div>
-            <div><div class="meta-app-name">Axarkia</div><div class="meta-app-desc">Plataforma de mensajería automatizada con WhatsApp</div></div>
+            <div><div class="meta-app-name">Axarkia</div><div class="meta-app-desc">WhatsApp Business automation platform for businesses</div></div>
           </div>
-          <div class="meta-perms-title">Axarkia recibirá acceso a:</div>
-          <div class="meta-perm"><span class="meta-perm-check">✓</span> Gestionar tu cuenta de WhatsApp Business (WABA)</div>
-          <div class="meta-perm"><span class="meta-perm-check">✓</span> Enviar y recibir mensajes en tu nombre</div>
-          <div class="meta-perm"><span class="meta-perm-check">✓</span> Gestionar plantillas de mensajes</div>
-          <div class="meta-perm"><span class="meta-perm-check">✓</span> Registrar conversiones y eventos de negocio</div>
-          <div class="meta-perm"><span class="meta-perm-check">✓</span> Acceder a la configuración del número de teléfono</div>
+          <div class="meta-perms-title">Axarkia will receive access to:</div>
+          <div class="meta-perm"><span class="meta-perm-check">✓</span> <strong>whatsapp_business_management</strong> — Manage your WhatsApp Business Account</div>
+          <div class="meta-perm"><span class="meta-perm-check">✓</span> <strong>whatsapp_business_messaging</strong> — Send and receive messages on your behalf</div>
+          <div class="meta-perm"><span class="meta-perm-check">✓</span> Manage message templates</div>
+          <div class="meta-perm"><span class="meta-perm-check">✓</span> Access phone number settings</div>
+          <div class="meta-perm"><span class="meta-perm-check">✓</span> Register business conversions</div>
           <div class="meta-actions">
-            <button class="meta-btn-cancel" onclick="closeModal('modal-connect')">Cancelar</button>
-            <button class="meta-btn-accept" onclick="showStep(3)">Continuar como empresa →</button>
+            <button class="meta-btn-cancel" onclick="closeModal('modal-connect')">Cancel</button>
+            <button class="meta-btn-accept" onclick="showStep('2b')">Continue as Business →</button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- STEP 2B: WABA SELECTION -->
+    <div id="modal-step-2b" style="display:none">
+      <div style="background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#0369a1">
+        🎬 <strong>FOR META REVIEWERS:</strong> User selects or creates a WhatsApp Business Account. We use the access token to call the WhatsApp Business Management API.
+      </div>
+      <div class="modal-title" style="margin-bottom:16px">Select WhatsApp Business Account</div>
+      <p style="font-size:13px;color:#666;margin-bottom:16px">Choose an existing WhatsApp Business Account or create a new one for your business.</p>
+      
+      <div style="border:2px solid #6c63ff;border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer;background:#f5f4ff" onclick="showStep('2c')">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:40px;height:40px;background:#dcfce7;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px">📱</div>
+          <div>
+            <div style="font-size:14px;font-weight:600">Create New WhatsApp Business Account</div>
+            <div style="font-size:12px;color:#888">Set up a new WABA for "Restaurante El Olivo"</div>
+          </div>
+          <div style="margin-left:auto;color:#6c63ff;font-size:18px">→</div>
+        </div>
+      </div>
+      
+      <div style="border:1px solid #e8e8e8;border-radius:10px;padding:14px;margin-bottom:10px;cursor:pointer" onclick="showStep('2c')">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:40px;height:40px;background:#f3f4f6;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px">🏢</div>
+          <div>
+            <div style="font-size:14px;font-weight:600">Existing Business Account</div>
+            <div style="font-size:12px;color:#888">WABA ID: 123456789012345</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2C: PHONE NUMBER VERIFICATION -->
+    <div id="modal-step-2c" style="display:none">
+      <div style="background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#0369a1">
+        🎬 <strong>FOR META REVIEWERS:</strong> Phone verification step. We call the WhatsApp Business API to request and verify the code.
+      </div>
+      <div class="modal-title" style="margin-bottom:16px">Verify Phone Number</div>
+      <p style="font-size:13px;color:#666;margin-bottom:16px">Enter the phone number you want to use for WhatsApp Business. This number will be verified via SMS.</p>
+      
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Business Phone Number</label>
+          <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:10px 12px;font-size:14px" value="+34 612 345 678" readonly/>
+        </div>
+        <div>
+          <label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Verification Code (sent via SMS)</label>
+          <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:10px 12px;font-size:14px;letter-spacing:8px;text-align:center;font-weight:700" value="847293" readonly/>
+        </div>
+      </div>
+      
+      <button class="btn btn-green" style="width:100%;margin-top:16px" onclick="showStep(3)">✓ Verify & Complete Setup</button>
+    </div>
+    
+    <!-- STEP 3: SUCCESS -->
     <div id="modal-step-3" style="display:none">
+      <div style="background:#dcfce7;border:1px solid #86efac;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#166534">
+        🎬 <strong>FOR META REVIEWERS:</strong> Connection successful! We now have access to send/receive messages via <strong>whatsapp_business_messaging</strong> and manage the account via <strong>whatsapp_business_management</strong>.
+      </div>
       <div class="success-box">
         <div class="success-icon">✅</div>
-        <div class="success-title">¡WhatsApp conectado!</div>
-        <div class="success-desc">Tu número de WhatsApp Business se ha vinculado correctamente a Axarkia. Ya puedes gestionar mensajes, plantillas y automatizaciones.</div>
+        <div class="success-title">WhatsApp Connected!</div>
+        <div class="success-desc">Your WhatsApp Business number has been successfully linked to Axarkia. You can now manage messages, templates, and automations.</div>
         <div class="data-table">
-          <div class="data-row"><span class="data-label">Número</span><span class="data-value">+34 612 345 678</span></div>
-          <div class="data-row"><span class="data-label">Nombre visible</span><span class="data-value">Restaurante El Olivo</span></div>
+          <div class="data-row"><span class="data-label">Phone Number</span><span class="data-value">+34 612 345 678</span></div>
+          <div class="data-row"><span class="data-label">Display Name</span><span class="data-value">Restaurante El Olivo</span></div>
           <div class="data-row"><span class="data-label">WABA ID</span><span class="data-value">382910475628391</span></div>
           <div class="data-row"><span class="data-label">Phone Number ID</span><span class="data-value">109876543210123</span></div>
-          <div class="data-row"><span class="data-label">Estado</span><span class="data-value" style="color:#16a34a">Activo ✓</span></div>
+          <div class="data-row"><span class="data-label">Status</span><span class="data-value" style="color:#16a34a">Active ✓</span></div>
+          <div class="data-row"><span class="data-label">Permissions Granted</span><span class="data-value" style="color:#6c63ff">whatsapp_business_messaging, whatsapp_business_management</span></div>
         </div>
-        <button class="btn btn-green" style="width:100%" onclick="completeConnect()">Ir a Mensajes →</button>
+        <button class="btn btn-green" style="width:100%" onclick="completeConnect()">Go to Messages →</button>
         <div class="billing-box" style="margin-top:14px;text-align:left">
-          💳 Añade un método de pago en WhatsApp Manager de Meta para poder enviar mensajes. El coste lo gestiona Meta directamente.
+          💳 Add a payment method in Meta's WhatsApp Manager to send messages. Costs are managed directly by Meta.
         </div>
       </div>
     </div>
@@ -579,28 +705,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="overlay" id="modal-template-send">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modal-template-send')">×</button>
-    <div class="modal-title" style="margin-bottom:16px">📋 Enviar plantilla</div>
+    <div style="background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#0369a1">
+      🎬 <strong>FOR META REVIEWERS:</strong> This demonstrates sending a message template via the WhatsApp Business API using <strong>whatsapp_business_messaging</strong> permission.
+    </div>
+    <div class="modal-title" style="margin-bottom:16px">📋 Send Template Message</div>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Plantilla</label>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Template</label>
         <select style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px">
-          <option>confirmacion_reserva (Utilidad)</option>
-          <option>oferta_fin_semana (Marketing)</option>
-          <option>recordatorio_reserva (Utilidad)</option>
+          <option>booking_confirmation (Utility)</option>
+          <option>weekend_offer (Marketing)</option>
+          <option>booking_reminder (Utility)</option>
         </select>
       </div>
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Destinatario</label>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Recipient Phone Number</label>
         <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="+34 699 111 222"/>
       </div>
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Variable {{1}} — Nombre</label>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Variable {{1}} — Name</label>
         <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="María"/>
       </div>
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Vista previa</label>
-        <div style="background:#dcf8c6;border-radius:8px;padding:12px;font-size:13px;color:#333;line-height:1.6">¡Hola María! ✅ Tu reserva ha sido confirmada para el sábado a las 21:00h. ¡Te esperamos en Restaurante El Olivo!</div>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Preview</label>
+        <div style="background:#dcf8c6;border-radius:8px;padding:12px;font-size:13px;color:#333;line-height:1.6">Hello María! ✅ Your reservation has been confirmed for Saturday at 9:00pm. We look forward to seeing you at Restaurante El Olivo!</div>
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:20px">
-      <button class="btn btn-outline" style="flex:1" onclick="closeModal('modal-template-send')">Cancelar</button>
-      <button class="btn btn-green" style="flex:2" onclick="closeModal('modal-template-send')">📤 Enviar plantilla</button>
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal('modal-template-send')">Cancel</button>
+      <button class="btn btn-green" style="flex:2" onclick="closeModal('modal-template-send')">📤 Send Template (whatsapp_business_messaging)</button>
     </div>
   </div>
 </div>
@@ -609,29 +738,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="overlay" id="modal-new-template">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modal-new-template')">×</button>
-    <div class="modal-title" style="margin-bottom:16px">+ Nueva plantilla</div>
+    <div style="background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#0369a1">
+      🎬 <strong>FOR META REVIEWERS:</strong> This demonstrates creating a new message template via the WhatsApp Business API using <strong>whatsapp_business_management</strong> permission.
+    </div>
+    <div class="modal-title" style="margin-bottom:16px">+ New Message Template</div>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Nombre (sin espacios)</label>
-        <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" placeholder="ej: promo_verano_2026"/>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Name (no spaces)</label>
+        <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" placeholder="e.g. summer_promo_2026"/>
       </div>
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Categoría</label>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Category</label>
         <select style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px">
-          <option>Marketing</option><option>Utilidad</option><option>Autenticación</option>
+          <option>Marketing</option><option>Utility</option><option>Authentication</option>
         </select>
       </div>
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Idioma</label>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Language</label>
         <select style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px">
-          <option>Español (España)</option><option>Inglés</option>
+          <option>English</option><option>Spanish (Spain)</option>
         </select>
       </div>
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Cuerpo del mensaje</label>
-        <textarea style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px;height:90px" placeholder="Usa {{1}}, {{2}} para variables..."></textarea>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Message Body</label>
+        <textarea style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px;height:90px" placeholder="Use {{1}}, {{2}} for variables..."></textarea>
       </div>
     </div>
-    <div class="alert alert-yellow" style="margin-top:12px">⏳ Las plantillas nuevas deben ser aprobadas por Meta antes de poder usarse. El proceso suele tardar entre 1 y 24 horas.</div>
+    <div class="alert alert-yellow" style="margin-top:12px">⏳ New templates must be approved by Meta before use. This process typically takes 1-24 hours.</div>
     <div style="display:flex;gap:8px;margin-top:16px">
-      <button class="btn btn-outline" style="flex:1" onclick="closeModal('modal-new-template')">Cancelar</button>
-      <button class="btn btn-primary" style="flex:2" onclick="closeModal('modal-new-template')">Enviar a revisión Meta →</button>
+      <button class="btn btn-outline" style="flex:1" onclick="closeModal('modal-new-template')">Cancel</button>
+      <button class="btn btn-primary" style="flex:2" onclick="closeModal('modal-new-template')">Submit for Meta Review →</button>
     </div>
   </div>
 </div>
@@ -644,6 +776,31 @@ function goTo(page) {
   document.getElementById('page-' + page).classList.add('active');
   const nav = document.getElementById('nav-' + page);
   if (nav) nav.classList.add('active');
+  
+  // Update demo step indicator
+  updateDemoStep(page);
+}
+
+// DEMO STEP INDICATOR FOR META REVIEWERS
+function updateDemoStep(page) {
+  const stepNum = document.getElementById('current-step');
+  const stepText = document.getElementById('current-step-text');
+  
+  const steps = {
+    'canales': { num: '1', text: 'Embedded Signup Flow' },
+    'mensajes': { num: '2', text: 'Messaging (whatsapp_business_messaging)' },
+    'plantillas': { num: '3', text: 'Templates (whatsapp_business_management)' },
+    'automatizaciones': { num: '4', text: 'Automations' },
+    'eventos': { num: '5', text: 'Business Events' },
+    'clientes': { num: '6', text: 'Multi-client Management' },
+    'dashboard': { num: '📊', text: 'Dashboard Overview' },
+    'ajustes': { num: '⚙️', text: 'Settings' }
+  };
+  
+  if (steps[page]) {
+    stepNum.textContent = steps[page].num;
+    stepText.textContent = steps[page].text;
+  }
 }
 
 // MODALS
@@ -660,10 +817,11 @@ document.querySelectorAll('.overlay').forEach(o => {
 
 // CONNECT FLOW STEPS
 function showStep(n) {
-  for (let i = 1; i <= 3; i++) {
-    const el = document.getElementById('modal-step-' + i);
-    if (el) el.style.display = n === i ? 'block' : 'none';
-  }
+  const steps = ['1', '2', '2b', '2c', '3'];
+  steps.forEach(s => {
+    const el = document.getElementById('modal-step-' + s);
+    if (el) el.style.display = String(n) === s ? 'block' : 'none';
+  });
 }
 function completeConnect() {
   closeModal('modal-connect');
@@ -686,7 +844,7 @@ function sendMsg() {
   const msgs = document.getElementById('chat-messages');
   const div = document.createElement('div');
   div.className = 'msg msg-out';
-  div.innerHTML = text + '<div class="msg-time">' + new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}) + '</div>';
+  div.innerHTML = text + '<div class="msg-time">' + new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}) + '</div><div class="msg-auto">✓ Sent via whatsapp_business_messaging</div>';
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
   input.value = '';
