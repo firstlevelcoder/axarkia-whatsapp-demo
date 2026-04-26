@@ -17,6 +17,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .demo-step-num{background:#fff;color:#1877f2;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
 .demo-step-text{font-size:12px}
 
+/* LIVE ASSET BAR — visible to reviewer at all times */
+.asset-bar{position:fixed;top:48px;left:0;right:0;height:36px;background:#0a1929;color:#fff;display:flex;align-items:center;gap:18px;padding:0 24px;font-size:12px;z-index:2900;border-bottom:1px solid #1e3a5f}
+.asset-bar .live-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:livepulse 1.5s infinite}
+@keyframes livepulse{0%,100%{opacity:1}50%{opacity:.4}}
+.asset-bar code{background:rgba(255,255,255,.1);padding:2px 8px;border-radius:4px;font-family:'SF Mono',Menlo,monospace;font-size:11px;color:#7dd3fc}
+.asset-bar .asset-label{color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+
+/* LIVE API result panel */
+.api-result{margin-top:12px;padding:14px;border-radius:10px;font-family:'SF Mono',Menlo,monospace;font-size:12px;line-height:1.6;border-left:4px solid #22c55e;background:#f0fdf4;color:#14532d;white-space:pre-wrap;word-break:break-all;display:none}
+.api-result.show{display:block}
+.api-result.error{border-left-color:#ef4444;background:#fef2f2;color:#7f1d1d}
+.api-result strong{font-family:-apple-system,sans-serif;font-size:13px;display:block;margin-bottom:6px}
+.api-result .wamid{background:#dcfce7;padding:6px 10px;border-radius:6px;display:inline-block;margin-top:6px;font-weight:600;color:#166534;border:1px dashed #22c55e}
+
+/* LIVE SEND PANEL on Messages page */
+.live-send-panel{background:#fff;border:2px solid #22c55e;border-radius:12px;padding:20px;margin-bottom:16px}
+.live-send-panel-title{font-size:15px;font-weight:700;color:#166534;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.live-send-panel-sub{font-size:12px;color:#666;margin-bottom:14px}
+.live-send-panel-asset{background:#f0fdf4;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.live-send-panel-asset code{background:#fff;padding:2px 6px;border-radius:4px;font-size:11px;color:#0369a1;border:1px solid #bae6fd}
+.live-send-grid{display:grid;grid-template-columns:1fr 2fr auto;gap:8px;align-items:center}
+.live-send-grid input{border:1px solid #d1d5db;border-radius:7px;padding:10px 12px;font-size:13px}
+.live-send-grid input:focus{outline:none;border-color:#22c55e}
+.live-send-grid label{font-size:11px;color:#666;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;display:block}
+.live-send-btn{background:#22c55e;color:#fff;border:none;padding:10px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;height:38px}
+.live-send-btn:hover{background:#16a34a}
+.live-send-btn:disabled{opacity:.5;cursor:not-allowed}
+
 /* TOOLTIP ANNOTATIONS */
 .tooltip-annotation{position:absolute;background:#1877f2;color:#fff;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;box-shadow:0 4px 15px rgba(0,0,0,.2);z-index:2500;animation:pulse 2s infinite}
 .tooltip-annotation::after{content:'';position:absolute;border:8px solid transparent}
@@ -25,16 +53,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
 
 /* NAV */
-.nav{background:#0f0f1a;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:fixed;top:48px;left:0;right:0;z-index:1000}
+.nav{background:#0f0f1a;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:fixed;top:84px;left:0;right:0;z-index:1000}
 .nav-logo{font-size:18px;font-weight:700;color:#fff}.nav-logo span{color:#6c63ff}
 .nav-right{display:flex;align-items:center;gap:10px;color:#aaa;font-size:13px}
 .nav-avatar{width:30px;height:30px;background:#6c63ff;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
 
 /* LAYOUT */
-.layout{display:flex;padding-top:104px;height:100vh}
+.layout{display:flex;padding-top:140px;height:100vh}
 
 /* SIDEBAR */
-.sidebar{width:210px;background:#fff;border-right:1px solid #e8e8e8;padding:16px 0;position:fixed;top:104px;bottom:0;overflow-y:auto}
+.sidebar{width:210px;background:#fff;border-right:1px solid #e8e8e8;padding:16px 0;position:fixed;top:140px;bottom:0;overflow-y:auto}
 .sidebar-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#bbb;padding:12px 18px 4px}
 .sidebar-item{padding:9px 18px;font-size:13px;color:#666;cursor:pointer;display:flex;align-items:center;gap:9px;border-left:3px solid transparent;transition:all .15s}
 .sidebar-item:hover{background:#f5f4ff;color:#6c63ff}
@@ -214,6 +242,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="badge-demo">SERVER-TO-SERVER APP</div>
 </div>
 
+<!-- LIVE ASSET BAR — proves we're connected to the real WhatsApp Business asset -->
+<div class="asset-bar">
+  <div class="live-dot"></div>
+  <span style="font-weight:700">LIVE</span>
+  <span class="asset-label">Connected asset:</span>
+  <span id="asset-name" style="font-weight:600">Loading…</span>
+  <span class="asset-label">Phone:</span>
+  <code id="asset-phone">—</code>
+  <span class="asset-label">Phone Number ID:</span>
+  <code id="asset-phone-id">—</code>
+  <span class="asset-label">WABA ID:</span>
+  <code id="asset-waba-id">—</code>
+  <span style="margin-left:auto;font-size:11px;color:#94a3b8">graph.facebook.com/v21.0</span>
+</div>
+
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-logo">Axarkia<span>.</span></div>
@@ -243,35 +286,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <!-- ===== DASHBOARD ===== -->
     <div class="page" id="page-dashboard">
       <div class="page-title">Dashboard</div>
-      <div class="page-sub">Resumen de actividad — Últimos 30 días</div>
+      <div class="page-sub">Activity summary — Last 30 days</div>
       <div class="stats">
-        <div class="stat"><div class="stat-label">Mensajes enviados</div><div class="stat-value">12.847</div><div class="stat-delta">↑ 18% vs mes anterior</div></div>
-        <div class="stat"><div class="stat-label">Mensajes recibidos</div><div class="stat-value">9.203</div><div class="stat-delta">↑ 12%</div></div>
-        <div class="stat"><div class="stat-label">Tasa de respuesta</div><div class="stat-value">94%</div><div class="stat-delta">↑ 3%</div></div>
-        <div class="stat"><div class="stat-label">Conversiones</div><div class="stat-value">347</div><div class="stat-delta">↑ 22%</div></div>
+        <div class="stat"><div class="stat-label">Messages sent</div><div class="stat-value">12,847</div><div class="stat-delta">↑ 18% vs previous month</div></div>
+        <div class="stat"><div class="stat-label">Messages received</div><div class="stat-value">9,203</div><div class="stat-delta">↑ 12%</div></div>
+        <div class="stat"><div class="stat-label">Response rate</div><div class="stat-value">94%</div><div class="stat-delta">↑ 3%</div></div>
+        <div class="stat"><div class="stat-label">Conversions</div><div class="stat-value">347</div><div class="stat-delta">↑ 22%</div></div>
       </div>
       <div class="card">
-        <div class="card-title">Canales activos <span class="badge badge-green">1 activo</span></div>
+        <div class="card-title">Active channels <span class="badge badge-green">1 active</span></div>
         <div class="channel-card">
           <div class="channel-info">
             <div class="channel-icon">📱</div>
             <div><div class="channel-name">Restaurante El Olivo</div><div class="channel-num">+34 612 345 678</div></div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="badge badge-green">Activo</span>
-            <button class="btn btn-outline btn-sm" onclick="goTo('mensajes')">Ver mensajes</button>
+            <span class="badge badge-green">Active</span>
+            <button class="btn btn-outline btn-sm" onclick="goTo('mensajes')">View messages</button>
           </div>
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Actividad reciente</div>
+        <div class="card-title">Recent activity</div>
         <table class="clients-table">
-          <thead><tr><th>Tipo</th><th>Descripción</th><th>Hora</th></tr></thead>
+          <thead><tr><th>Type</th><th>Description</th><th>Time</th></tr></thead>
           <tbody>
-            <tr><td><span class="badge badge-green">Enviado</span></td><td>Plantilla "confirmacion_reserva" → +34 699 111 222</td><td style="color:#aaa">hace 5 min</td></tr>
-            <tr><td><span class="badge badge-gray">Recibido</span></td><td>"Quiero reservar mesa para 4 personas el sábado"</td><td style="color:#aaa">hace 12 min</td></tr>
-            <tr><td><span class="badge badge-green">Auto</span></td><td>Respuesta automática enviada a +34 699 333 444</td><td style="color:#aaa">hace 18 min</td></tr>
-            <tr><td><span class="badge badge-yellow">Evento</span></td><td>Conversión registrada: reserva completada</td><td style="color:#aaa">hace 25 min</td></tr>
+            <tr><td><span class="badge badge-green">Sent</span></td><td>Template "booking_confirmation" → +34 699 111 222</td><td style="color:#aaa">5 min ago</td></tr>
+            <tr><td><span class="badge badge-gray">Received</span></td><td>"I want to book a table for 4 people on Saturday"</td><td style="color:#aaa">12 min ago</td></tr>
+            <tr><td><span class="badge badge-green">Auto</span></td><td>Automatic reply sent to +34 699 333 444</td><td style="color:#aaa">18 min ago</td></tr>
+            <tr><td><span class="badge badge-yellow">Event</span></td><td>Conversion registered: booking completed</td><td style="color:#aaa">25 min ago</td></tr>
           </tbody>
         </table>
       </div>
@@ -287,7 +330,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <strong>Step 1 - Embedded Signup:</strong> Business users click "Connect WhatsApp Business" to start the official Meta Embedded Signup flow. This grants us access to their WABA via <code>whatsapp_business_management</code> permission.
       </div>
 
-      <div id="canales-empty">
+      <div id="canales-empty" style="display:none">
         <div class="empty use-case-highlight">
           <div class="use-case-label">USE CASE: whatsapp_business_management</div>
           <div class="empty-icon">📱</div>
@@ -297,17 +340,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         </div>
       </div>
 
-      <div id="canales-connected" style="display:none">
-        <div class="alert alert-green">✅ Channel connected successfully. You can now send and receive messages.</div>
+      <div id="canales-connected">
+        <div class="alert alert-green">✅ Channel connected and authorized via Meta. Live API access enabled.</div>
         <div class="channel-card">
           <div class="channel-info">
             <div class="channel-icon">📱</div>
-            <div><div class="channel-name">Restaurante El Olivo</div><div class="channel-num">+34 612 345 678 · WABA ID: 382910475628391</div></div>
+            <div><div class="channel-name" id="canales-name">—</div><div class="channel-num" id="canales-detail">—</div></div>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <span class="badge badge-green">Active</span>
-            <button class="btn btn-outline btn-sm">Configure</button>
-            <button class="btn btn-red btn-sm">Disconnect</button>
+            <button class="btn btn-outline btn-sm" onclick="goTo('mensajes')">Open messaging</button>
+            <button class="btn btn-outline btn-sm" onclick="goTo('plantillas')">Open templates</button>
           </div>
         </div>
         <div class="billing-box">
@@ -327,6 +370,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <!-- DEMO NARRATION FOR META REVIEWERS -->
       <div class="demo-narration" id="narration-mensajes">
         <strong>Step 2 - Messaging (whatsapp_business_messaging):</strong> This shows our core use case — sending and receiving WhatsApp messages on behalf of the connected business. We use this permission to manage real-time conversations.
+      </div>
+
+      <!-- LIVE SEND PANEL — calls real WhatsApp Cloud API -->
+      <div class="live-send-panel">
+        <div class="live-send-panel-title">📡 Live API send · whatsapp_business_messaging</div>
+        <div class="live-send-panel-sub">This panel calls <code>POST graph.facebook.com/v21.0/{phone_number_id}/messages</code> with the access token authorized via <code>whatsapp_business_messaging</code>. The recipient must be a registered test number on this WABA.</div>
+        <div class="live-send-panel-asset">
+          <span><strong>From:</strong> <span id="live-from-name">—</span></span>
+          <code id="live-from-phone">—</code>
+          <span class="asset-label">Phone Number ID:</span>
+          <code id="live-from-phone-id">—</code>
+        </div>
+        <div class="live-send-grid">
+          <div>
+            <label>Recipient (E.164, no +)</label>
+            <input id="live-recipient" placeholder="34666123456"/>
+          </div>
+          <div>
+            <label>Message text</label>
+            <input id="live-message" value="Hello from Axarkia — Meta App Review live test."/>
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button class="live-send-btn" id="live-send-btn" onclick="liveSendMessage()">Send via Cloud API</button>
+          </div>
+        </div>
+        <div class="api-result" id="live-result"></div>
       </div>
 
       <div class="chat-layout use-case-highlight">
@@ -395,107 +465,109 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       
       <!-- DEMO NARRATION FOR META REVIEWERS -->
       <div class="demo-narration" id="narration-plantillas">
-        <strong>Step 3 - Template Management (whatsapp_business_management):</strong> We use this permission to create, edit, and manage message templates on behalf of our clients. Templates must be approved by Meta before use.
+        <strong>Step 3 - Template Management (whatsapp_business_management):</strong> We use this permission to list, create, and send message templates on behalf of our clients. Templates must be approved by Meta before use.
       </div>
 
-      <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <!-- LIVE TEMPLATES PANEL — loaded from real Graph API -->
+      <div class="live-send-panel" style="border-color:#6c63ff">
+        <div class="live-send-panel-title" style="color:#4338ca">📡 Live templates · whatsapp_business_management</div>
+        <div class="live-send-panel-sub">Templates below are fetched live via <code>GET graph.facebook.com/v21.0/{waba_id}/message_templates</code>. Click <strong>Send</strong> on any APPROVED template to call <code>POST /messages</code> with the template payload.</div>
+        <div class="live-send-panel-asset">
+          <span><strong>WABA:</strong> <span id="tmpl-from-name">—</span></span>
+          <span class="asset-label">WABA ID:</span>
+          <code id="tmpl-from-waba">—</code>
+          <span style="margin-left:auto"><button class="btn btn-outline btn-sm" onclick="loadTemplates()">↻ Refresh from API</button></span>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div style="font-size:13px;color:#666"><span id="tmpl-count">…</span> templates · live from Cloud API</div>
         <button class="btn btn-primary" onclick="openModal('modal-new-template')">+ New Template</button>
       </div>
-      <div class="template-grid use-case-highlight" style="padding:16px">
+      <div class="template-grid use-case-highlight" id="template-grid" style="padding:16px">
         <div class="use-case-label">USE CASE: whatsapp_business_management (Templates)</div>
-        <div class="template-card">
-          <div class="template-name">booking_confirmation</div>
-          <div class="template-category"><span class="badge badge-green">Utility</span></div>
-          <div class="template-body">Hello {{1}}! ✅ Your reservation has been confirmed for {{2}} at {{3}}. We look forward to seeing you at Restaurante El Olivo!</div>
-          <div class="template-footer"><span class="badge badge-green">Approved</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Send</button><button class="btn btn-outline btn-sm">Edit</button></div></div>
-        </div>
-        <div class="template-card">
-          <div class="template-name">weekend_offer</div>
-          <div class="template-category"><span class="badge" style="background:#fce7f3;color:#be185d">Marketing</span></div>
-          <div class="template-body">🌟 {{1}}, this weekend we have a special menu for only {{2}}€! Includes starter, main course and dessert. Book your table? Reply YES and we'll call you.</div>
-          <div class="template-footer"><span class="badge badge-green">Approved</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Send</button><button class="btn btn-outline btn-sm">Edit</button></div></div>
-        </div>
-        <div class="template-card">
-          <div class="template-name">booking_reminder</div>
-          <div class="template-category"><span class="badge badge-green">Utility</span></div>
-          <div class="template-body">⏰ Hi {{1}}, reminder that you have a reservation tomorrow {{2}} at {{3}} for {{4}} people. If you need to cancel, reply CANCEL.</div>
-          <div class="template-footer"><span class="badge badge-green">Approved</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">Send</button><button class="btn btn-outline btn-sm">Edit</button></div></div>
-        </div>
-        <div class="template-card">
-          <div class="template-name">verification_code</div>
-          <div class="template-category"><span class="badge" style="background:#dbeafe;color:#1d4ed8">Authentication</span></div>
-          <div class="template-body">Your Axarkia verification code is: <strong>{{1}}</strong>. Valid for 10 minutes. Do not share it with anyone.</div>
-          <div class="template-footer"><span class="badge badge-yellow">Under review</span><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm">Check status</button></div></div>
-        </div>
+        <div style="grid-column:1/-1;padding:32px;text-align:center;color:#888">Loading templates from Graph API…</div>
       </div>
     </div>
 
     <!-- ===== AUTOMATIZACIONES ===== -->
     <div class="page" id="page-automatizaciones">
-      <div class="page-title">Automatizaciones</div>
-      <div class="page-sub">Flujos de respuesta automática para tu WhatsApp Business</div>
+      <div class="page-title">Automations</div>
+      <div class="page-sub">Automatic reply flows for your WhatsApp Business account</div>
+
+      <!-- DEMO NARRATION FOR META REVIEWERS -->
+      <div class="demo-narration">
+        <strong>Step 4 - Automations (whatsapp_business_messaging):</strong> Axarkia uses this permission to send automated replies on behalf of connected businesses — welcome messages, booking confirmations, and out-of-hours responses.
+      </div>
+
       <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
-        <button class="btn btn-primary">+ Nueva automatización</button>
+        <button class="btn btn-primary">+ New automation</button>
       </div>
       <div class="card">
-        <div class="card-title">Bienvenida a nuevos contactos <span class="badge badge-green">Activa</span></div>
-        <p style="font-size:13px;color:#555;margin-bottom:12px">Se activa cuando un contacto nuevo escribe por primera vez</p>
+        <div class="card-title">Welcome new contacts <span class="badge badge-green">Active</span></div>
+        <p style="font-size:13px;color:#555;margin-bottom:12px">Triggered when a new contact writes for the first time</p>
         <div style="background:#f8f8f8;border-radius:8px;padding:12px;font-size:13px;color:#444;line-height:1.6;margin-bottom:12px">
-          🤖 <em>"¡Hola! Soy el asistente virtual de Restaurante El Olivo. ¿En qué puedo ayudarte? Escribe:<br>1️⃣ Reservar mesa<br>2️⃣ Ver carta<br>3️⃣ Horarios y ubicación"</em>
+          🤖 <em>"Hello! I'm the virtual assistant of Restaurante El Olivo. How can I help you? Type:<br>1️⃣ Book a table<br>2️⃣ View menu<br>3️⃣ Opening hours &amp; location"</em>
         </div>
         <div style="display:flex;gap:8px">
-          <span style="font-size:12px;color:#888">Activada 847 veces este mes</span>
-          <button class="btn btn-outline btn-sm" style="margin-left:auto">Editar</button>
-          <button class="btn btn-red btn-sm">Pausar</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Confirmación automática de reservas <span class="badge badge-green">Activa</span></div>
-        <p style="font-size:13px;color:#555;margin-bottom:12px">Cuando se recibe "1" o la palabra "reservar", inicia el flujo de reserva</p>
-        <div style="background:#f8f8f8;border-radius:8px;padding:12px;font-size:13px;color:#444;line-height:1.6;margin-bottom:12px">
-          🤖 <em>"¡Perfecto! Para hacer tu reserva necesito: nombre, fecha, hora y número de personas. ¿Para cuándo sería?"</em>
-        </div>
-        <div style="display:flex;gap:8px">
-          <span style="font-size:12px;color:#888">234 reservas gestionadas este mes</span>
-          <button class="btn btn-outline btn-sm" style="margin-left:auto">Editar</button>
-          <button class="btn btn-red btn-sm">Pausar</button>
+          <span style="font-size:12px;color:#888">Triggered 847 times this month</span>
+          <button class="btn btn-outline btn-sm" style="margin-left:auto">Edit</button>
+          <button class="btn btn-red btn-sm">Pause</button>
         </div>
       </div>
       <div class="card">
-        <div class="card-title">Respuesta fuera de horario <span class="badge badge-yellow">Pausada</span></div>
-        <p style="font-size:13px;color:#555;margin-bottom:12px">Activa fuera del horario de atención (22:00 - 09:00)</p>
+        <div class="card-title">Automatic booking confirmation <span class="badge badge-green">Active</span></div>
+        <p style="font-size:13px;color:#555;margin-bottom:12px">When "1" or the word "book" is received, starts the booking flow</p>
         <div style="background:#f8f8f8;border-radius:8px;padding:12px;font-size:13px;color:#444;line-height:1.6;margin-bottom:12px">
-          🤖 <em>"En este momento estamos cerrados. Nuestro horario es de 13:00 a 16:00 y de 20:00 a 23:00. Te responderemos en cuanto abramos 😊"</em>
+          🤖 <em>"Perfect! To complete your booking I need: name, date, time and number of people. When would you like to come?"</em>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-green btn-sm" style="margin-left:auto">Activar</button>
-          <button class="btn btn-outline btn-sm">Editar</button>
+          <span style="font-size:12px;color:#888">234 bookings managed this month</span>
+          <button class="btn btn-outline btn-sm" style="margin-left:auto">Edit</button>
+          <button class="btn btn-red btn-sm">Pause</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Out-of-hours reply <span class="badge badge-yellow">Paused</span></div>
+        <p style="font-size:13px;color:#555;margin-bottom:12px">Active outside business hours (10:00 PM – 9:00 AM)</p>
+        <div style="background:#f8f8f8;border-radius:8px;padding:12px;font-size:13px;color:#444;line-height:1.6;margin-bottom:12px">
+          🤖 <em>"We are currently closed. Our hours are 1:00 PM–4:00 PM and 8:00 PM–11:00 PM. We'll reply as soon as we open 😊"</em>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-green btn-sm" style="margin-left:auto">Activate</button>
+          <button class="btn btn-outline btn-sm">Edit</button>
         </div>
       </div>
     </div>
 
     <!-- ===== EVENTOS ===== -->
     <div class="page" id="page-eventos">
-      <div class="page-title">Eventos y Conversiones</div>
-      <div class="page-sub">Seguimiento de conversiones registradas a través de WhatsApp Business · Últimos 30 días</div>
-      <div class="alert alert-blue">📊 Los eventos se registran automáticamente en tu cuenta de WhatsApp Business mediante el permiso <strong>whatsapp_business_manage_events</strong>, lo que permite medir el ROI de tus campañas de mensajería.</div>
+      <div class="page-title">Events &amp; Conversions</div>
+      <div class="page-sub">Conversion tracking via WhatsApp Business · Last 30 days</div>
+
+      <!-- DEMO NARRATION FOR META REVIEWERS -->
+      <div class="demo-narration">
+        <strong>Step 5 - Business Events (whatsapp_business_management):</strong> We use this permission to register business conversion events in the connected WhatsApp Business Account, enabling clients to measure ROI of their messaging campaigns.
+      </div>
+
+      <div class="alert alert-blue">📊 Events are automatically registered in the WhatsApp Business Account using the <strong>whatsapp_business_management</strong> permission, enabling ROI measurement for messaging campaigns.</div>
       <div class="events-grid">
-        <div class="event-card"><div class="event-icon">🛒</div><div class="event-label">Reservas completadas</div><div class="event-value">347</div><div class="event-delta">↑ 22% vs mes anterior</div></div>
-        <div class="event-card"><div class="event-icon">👀</div><div class="event-label">Vistas de carta</div><div class="event-value">1.204</div><div class="event-delta">↑ 8%</div></div>
-        <div class="event-card"><div class="event-icon">📞</div><div class="event-label">Contactos nuevos</div><div class="event-value">892</div><div class="event-delta">↑ 15%</div></div>
-        <div class="event-card"><div class="event-icon">💬</div><div class="event-label">Conversaciones iniciadas</div><div class="event-value">2.341</div><div class="event-delta">↑ 18%</div></div>
-        <div class="event-card"><div class="event-icon">✅</div><div class="event-label">Tasa de conversión</div><div class="event-value">14.8%</div><div class="event-delta">↑ 2.3%</div></div>
-        <div class="event-card"><div class="event-icon">💰</div><div class="event-label">Valor estimado</div><div class="event-value">€8.420</div><div class="event-delta">↑ 31%</div></div>
+        <div class="event-card"><div class="event-icon">🛒</div><div class="event-label">Bookings completed</div><div class="event-value">347</div><div class="event-delta">↑ 22% vs previous month</div></div>
+        <div class="event-card"><div class="event-icon">👀</div><div class="event-label">Menu views</div><div class="event-value">1,204</div><div class="event-delta">↑ 8%</div></div>
+        <div class="event-card"><div class="event-icon">📞</div><div class="event-label">New contacts</div><div class="event-value">892</div><div class="event-delta">↑ 15%</div></div>
+        <div class="event-card"><div class="event-icon">💬</div><div class="event-label">Conversations started</div><div class="event-value">2,341</div><div class="event-delta">↑ 18%</div></div>
+        <div class="event-card"><div class="event-icon">✅</div><div class="event-label">Conversion rate</div><div class="event-value">14.8%</div><div class="event-delta">↑ 2.3%</div></div>
+        <div class="event-card"><div class="event-icon">💰</div><div class="event-label">Estimated value</div><div class="event-value">€8,420</div><div class="event-delta">↑ 31%</div></div>
       </div>
       <div class="card">
-        <div class="card-title">Eventos recientes</div>
+        <div class="card-title">Recent events</div>
         <table class="clients-table">
-          <thead><tr><th>Evento</th><th>Contacto</th><th>Canal</th><th>Valor</th><th>Fecha</th></tr></thead>
+          <thead><tr><th>Event</th><th>Contact</th><th>Channel</th><th>Value</th><th>Time</th></tr></thead>
           <tbody>
-            <tr><td><span class="badge badge-green">reserva_completada</span></td><td>+34 699 111 222</td><td>Restaurante El Olivo</td><td>€48</td><td style="color:#aaa">hace 5 min</td></tr>
-            <tr><td><span class="badge" style="background:#dbeafe;color:#1d4ed8">contacto_nuevo</span></td><td>+34 611 333 444</td><td>Restaurante El Olivo</td><td>—</td><td style="color:#aaa">hace 12 min</td></tr>
-            <tr><td><span class="badge badge-green">reserva_completada</span></td><td>+34 622 555 666</td><td>Restaurante El Olivo</td><td>€72</td><td style="color:#aaa">hace 28 min</td></tr>
-            <tr><td><span class="badge badge-yellow">vista_carta</span></td><td>+34 677 888 999</td><td>Restaurante El Olivo</td><td>—</td><td style="color:#aaa">hace 45 min</td></tr>
+            <tr><td><span class="badge badge-green">booking_completed</span></td><td>+34 699 111 222</td><td>Restaurante El Olivo</td><td>€48</td><td style="color:#aaa">5 min ago</td></tr>
+            <tr><td><span class="badge" style="background:#dbeafe;color:#1d4ed8">new_contact</span></td><td>+34 611 333 444</td><td>Restaurante El Olivo</td><td>—</td><td style="color:#aaa">12 min ago</td></tr>
+            <tr><td><span class="badge badge-green">booking_completed</span></td><td>+34 622 555 666</td><td>Restaurante El Olivo</td><td>€72</td><td style="color:#aaa">28 min ago</td></tr>
+            <tr><td><span class="badge badge-yellow">menu_view</span></td><td>+34 677 888 999</td><td>Restaurante El Olivo</td><td>—</td><td style="color:#aaa">45 min ago</td></tr>
           </tbody>
         </table>
       </div>
@@ -503,36 +575,42 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- ===== CLIENTES ===== -->
     <div class="page" id="page-clientes">
-      <div class="page-title">Clientes registrados</div>
-      <div class="page-sub">Negocios conectados a través del Registro Insertado · Gestionados mediante <strong>manage_app_solution</strong></div>
-      <div class="alert alert-blue">🔗 Axarkia gestiona múltiples cuentas de WhatsApp Business en nombre de distintos clientes. Cada cliente autorizó el acceso mediante el proceso de Registro Insertado de Meta.</div>
+      <div class="page-title">My Clients</div>
+      <div class="page-sub">Businesses connected via Meta Embedded Signup · Managed via <strong>whatsapp_business_management</strong></div>
+
+      <!-- DEMO NARRATION FOR META REVIEWERS -->
+      <div class="demo-narration">
+        <strong>Step 6 - Multi-client Management (whatsapp_business_management):</strong> Axarkia is a platform provider (ISV). This page shows all client businesses that authorized our app via Embedded Signup. We manage their WABAs on their behalf using the whatsapp_business_management permission.
+      </div>
+
+      <div class="alert alert-blue">🔗 Axarkia manages multiple WhatsApp Business Accounts on behalf of different clients. Each client authorized access via Meta's Embedded Signup flow.</div>
       <div class="card">
         <table class="clients-table">
-          <thead><tr><th>Negocio</th><th>WABA ID</th><th>Número</th><th>Estado</th><th>Mensajes/mes</th><th>Acciones</th></tr></thead>
+          <thead><tr><th>Business</th><th>WABA ID</th><th>Phone Number</th><th>Status</th><th>Messages/month</th><th>Actions</th></tr></thead>
           <tbody>
             <tr>
-              <td><strong>Restaurante El Olivo</strong><div style="font-size:11px;color:#888">Hostelería</div></td>
+              <td><strong>Restaurante El Olivo</strong><div style="font-size:11px;color:#888">Hospitality</div></td>
               <td style="font-family:monospace;font-size:11px">382910475628391</td>
               <td>+34 612 345 678</td>
-              <td><span class="badge badge-green">Activo</span></td>
-              <td>12.847</td>
-              <td><button class="btn btn-outline btn-sm">Gestionar</button></td>
+              <td><span class="badge badge-green">Active</span></td>
+              <td>12,847</td>
+              <td><button class="btn btn-outline btn-sm">Manage</button></td>
             </tr>
             <tr>
-              <td><strong>Clínica Dental Sonrisa</strong><div style="font-size:11px;color:#888">Salud</div></td>
+              <td><strong>Clínica Dental Sonrisa</strong><div style="font-size:11px;color:#888">Healthcare</div></td>
               <td style="font-family:monospace;font-size:11px">294817362918473</td>
               <td>+34 934 567 890</td>
-              <td><span class="badge badge-green">Activo</span></td>
-              <td>4.231</td>
-              <td><button class="btn btn-outline btn-sm">Gestionar</button></td>
+              <td><span class="badge badge-green">Active</span></td>
+              <td>4,231</td>
+              <td><button class="btn btn-outline btn-sm">Manage</button></td>
             </tr>
             <tr>
-              <td><strong>Academia Drive Fast</strong><div style="font-size:11px;color:#888">Educación</div></td>
+              <td><strong>Academia Drive Fast</strong><div style="font-size:11px;color:#888">Education</div></td>
               <td style="font-family:monospace;font-size:11px">573829104756283</td>
               <td>+34 654 321 987</td>
-              <td><span class="badge badge-yellow">Pendiente pago</span></td>
+              <td><span class="badge badge-yellow">Payment pending</span></td>
               <td>891</td>
-              <td><button class="btn btn-outline btn-sm">Gestionar</button></td>
+              <td><button class="btn btn-outline btn-sm">Manage</button></td>
             </tr>
           </tbody>
         </table>
@@ -541,26 +619,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
     <!-- ===== AJUSTES ===== -->
     <div class="page" id="page-ajustes">
-      <div class="page-title">Ajustes de la cuenta</div>
-      <div class="page-sub">Configuración de tu perfil y conexiones</div>
+      <div class="page-title">Account Settings</div>
+      <div class="page-sub">Manage your profile and WhatsApp connections</div>
       <div class="card">
-        <div class="card-title">Perfil del negocio</div>
+        <div class="card-title">Business profile</div>
         <div style="display:grid;gap:12px">
-          <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:12px;color:#888">Nombre del negocio</label><input style="border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="Restaurante El Olivo S.L."/></div>
-          <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:12px;color:#888">Email de contacto</label><input style="border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="info@restauranteelolivo.com"/></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:12px;color:#888">Business name</label><input style="border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="Restaurante El Olivo S.L."/></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:12px;color:#888">Contact email</label><input style="border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="info@restauranteelolivo.com"/></div>
         </div>
-        <div style="margin-top:16px;text-align:right"><button class="btn btn-primary btn-sm">Guardar cambios</button></div>
+        <div style="margin-top:16px;text-align:right"><button class="btn btn-primary btn-sm">Save changes</button></div>
       </div>
       <div class="card">
-        <div class="card-title">Canal de WhatsApp conectado</div>
+        <div class="card-title">Connected WhatsApp channel</div>
         <div class="channel-card">
           <div class="channel-info">
             <div class="channel-icon">📱</div>
             <div><div class="channel-name">+34 612 345 678</div><div class="channel-num">WABA ID: 382910475628391</div></div>
           </div>
           <div style="display:flex;gap:8px">
-            <span class="badge badge-green">Activo</span>
-            <button class="btn btn-red btn-sm">Desconectar</button>
+            <span class="badge badge-green">Active</span>
+            <button class="btn btn-red btn-sm">Disconnect</button>
           </div>
         </div>
       </div>
@@ -706,30 +784,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modal-template-send')">×</button>
     <div style="background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#0369a1">
-      🎬 <strong>FOR META REVIEWERS:</strong> This demonstrates sending a message template via the WhatsApp Business API using <strong>whatsapp_business_messaging</strong> permission.
+      🎬 <strong>FOR META REVIEWERS:</strong> This sends a real template message via <code>POST graph.facebook.com/v21.0/{phone_number_id}/messages</code> using <strong>whatsapp_business_messaging</strong>.
     </div>
-    <div class="modal-title" style="margin-bottom:16px">📋 Send Template Message</div>
+    <div class="modal-title" style="margin-bottom:16px">📋 Send Template (Live API)</div>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Template</label>
-        <select style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px">
-          <option>booking_confirmation (Utility)</option>
-          <option>weekend_offer (Marketing)</option>
-          <option>booking_reminder (Utility)</option>
-        </select>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Template (only APPROVED can be sent)</label>
+        <select id="send-tmpl-select" style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px"></select>
       </div>
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Recipient Phone Number</label>
-        <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="+34 699 111 222"/>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Recipient (E.164, no +)</label>
+        <input id="send-tmpl-to" style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" placeholder="34666123456"/>
       </div>
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Variable {{1}} — Name</label>
-        <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" value="María"/>
-      </div>
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Preview</label>
-        <div style="background:#dcf8c6;border-radius:8px;padding:12px;font-size:13px;color:#333;line-height:1.6">Hello María! ✅ Your reservation has been confirmed for Saturday at 9:00pm. We look forward to seeing you at Restaurante El Olivo!</div>
+      <div id="send-tmpl-vars-wrap"></div>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Body preview</label>
+        <div id="send-tmpl-preview" style="background:#dcf8c6;border-radius:8px;padding:12px;font-size:13px;color:#333;line-height:1.6;min-height:42px">Select a template…</div>
       </div>
     </div>
+    <div class="api-result" id="send-tmpl-result"></div>
     <div style="display:flex;gap:8px;margin-top:20px">
       <button class="btn btn-outline" style="flex:1" onclick="closeModal('modal-template-send')">Cancel</button>
-      <button class="btn btn-green" style="flex:2" onclick="closeModal('modal-template-send')">📤 Send Template (whatsapp_business_messaging)</button>
+      <button class="btn btn-green" style="flex:2" id="send-tmpl-btn" onclick="liveSendTemplate()">📤 Send Template via Cloud API</button>
     </div>
   </div>
 </div>
@@ -739,55 +812,60 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="modal">
     <button class="modal-close" onclick="closeModal('modal-new-template')">×</button>
     <div style="background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:11px;color:#0369a1">
-      🎬 <strong>FOR META REVIEWERS:</strong> This demonstrates creating a new message template via the WhatsApp Business API using <strong>whatsapp_business_management</strong> permission.
+      🎬 <strong>FOR META REVIEWERS:</strong> Creates a real template via <code>POST graph.facebook.com/v21.0/{waba_id}/message_templates</code> using <strong>whatsapp_business_management</strong>.
     </div>
-    <div class="modal-title" style="margin-bottom:16px">+ New Message Template</div>
+    <div class="modal-title" style="margin-bottom:16px">+ New Message Template (Live API)</div>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Name (no spaces)</label>
-        <input style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" placeholder="e.g. summer_promo_2026"/>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Name (lowercase, underscores only)</label>
+        <input id="new-tmpl-name" style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" placeholder="e.g. axarkia_review_test_2026"/>
       </div>
       <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Category</label>
-        <select style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px">
-          <option>Marketing</option><option>Utility</option><option>Authentication</option>
+        <select id="new-tmpl-category" style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px">
+          <option value="UTILITY">Utility</option>
+          <option value="MARKETING">Marketing</option>
+          <option value="AUTHENTICATION">Authentication</option>
         </select>
       </div>
       <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Language</label>
-        <select style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px">
-          <option>English</option><option>Spanish (Spain)</option>
+        <select id="new-tmpl-language" style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px">
+          <option value="en_US">English (US)</option>
+          <option value="es_ES">Spanish (Spain)</option>
+          <option value="es">Spanish</option>
+          <option value="en">English</option>
         </select>
       </div>
-      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Message Body</label>
-        <textarea style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px;height:90px" placeholder="Use {{1}}, {{2}} for variables..."></textarea>
+      <div><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Body</label>
+        <textarea id="new-tmpl-body" style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px;height:90px" placeholder="Hello {{1}}, this is a test template created from Axarkia."></textarea>
       </div>
     </div>
-    <div class="alert alert-yellow" style="margin-top:12px">⏳ New templates must be approved by Meta before use. This process typically takes 1-24 hours.</div>
+    <div class="alert alert-yellow" style="margin-top:12px">⏳ Submitted templates start in <strong>PENDING</strong> status and are typically auto-approved by Meta within seconds for utility templates.</div>
+    <div class="api-result" id="new-tmpl-result"></div>
     <div style="display:flex;gap:8px;margin-top:16px">
       <button class="btn btn-outline" style="flex:1" onclick="closeModal('modal-new-template')">Cancel</button>
-      <button class="btn btn-primary" style="flex:2" onclick="closeModal('modal-new-template')">Submit for Meta Review →</button>
+      <button class="btn btn-primary" style="flex:2" id="new-tmpl-btn" onclick="liveCreateTemplate()">Submit to Meta via Cloud API →</button>
     </div>
   </div>
 </div>
 
 <script>
+// ============================================================
 // NAVIGATION
+// ============================================================
 function goTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   const nav = document.getElementById('nav-' + page);
   if (nav) nav.classList.add('active');
-  
-  // Update demo step indicator
   updateDemoStep(page);
+  if (page === 'plantillas' && !window.__templatesLoaded) loadTemplates();
 }
 
-// DEMO STEP INDICATOR FOR META REVIEWERS
 function updateDemoStep(page) {
   const stepNum = document.getElementById('current-step');
   const stepText = document.getElementById('current-step-text');
-  
   const steps = {
-    'canales': { num: '1', text: 'Embedded Signup Flow' },
+    'canales': { num: '1', text: 'Connected WhatsApp Business asset' },
     'mensajes': { num: '2', text: 'Messaging (whatsapp_business_messaging)' },
     'plantillas': { num: '3', text: 'Templates (whatsapp_business_management)' },
     'automatizaciones': { num: '4', text: 'Automations' },
@@ -796,7 +874,6 @@ function updateDemoStep(page) {
     'dashboard': { num: '📊', text: 'Dashboard Overview' },
     'ajustes': { num: '⚙️', text: 'Settings' }
   };
-  
   if (steps[page]) {
     stepNum.textContent = steps[page].num;
     stepText.textContent = steps[page].text;
@@ -807,6 +884,7 @@ function updateDemoStep(page) {
 function openModal(id) {
   document.getElementById(id).classList.add('open');
   if (id === 'modal-connect') showStep(1);
+  if (id === 'modal-template-send') prepareSendTemplateModal();
 }
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
@@ -815,7 +893,6 @@ document.querySelectorAll('.overlay').forEach(o => {
   o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
 });
 
-// CONNECT FLOW STEPS
 function showStep(n) {
   const steps = ['1', '2', '2b', '2c', '3'];
   steps.forEach(s => {
@@ -831,27 +908,284 @@ function completeConnect() {
 }
 function addAnotherChannel() { openModal('modal-connect'); }
 
-// CHAT
 function selectChat(el, name) {
   document.querySelectorAll('.chat-item').forEach(i => i.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('chat-name').textContent = name;
 }
-function sendMsg() {
-  const input = document.getElementById('chat-input-field');
-  const text = input.value.trim();
-  if (!text) return;
-  const msgs = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.className = 'msg msg-out';
-  div.innerHTML = text + '<div class="msg-time">' + new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}) + '</div><div class="msg-auto">✓ Sent via whatsapp_business_messaging</div>';
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  input.value = '';
+
+// ============================================================
+// LIVE API — talks to /api/* serverless functions on Vercel
+// ============================================================
+const ACCOUNT = { phoneNumberId: '', wabaId: '', phone: '', name: '', testRecipient: '' };
+const TEMPLATES = { items: [], byName: {} };
+
+async function loadAccountInfo() {
+  try {
+    const r = await fetch('/api/account-info');
+    const data = await r.json();
+    if (!r.ok) throw new Error(JSON.stringify(data.error || data));
+
+    ACCOUNT.phoneNumberId = data.phone_number_id;
+    ACCOUNT.wabaId = data.waba_id;
+    ACCOUNT.phone = data.display_phone_number || '';
+    ACCOUNT.name = data.verified_name || 'WhatsApp Business';
+    ACCOUNT.testRecipient = data.test_recipient || '';
+
+    document.getElementById('asset-name').textContent = ACCOUNT.name;
+    document.getElementById('asset-phone').textContent = ACCOUNT.phone ? '+' + ACCOUNT.phone.replace(/^\+/, '') : '—';
+    document.getElementById('asset-phone-id').textContent = ACCOUNT.phoneNumberId;
+    document.getElementById('asset-waba-id').textContent = ACCOUNT.wabaId;
+
+    document.getElementById('live-from-name').textContent = ACCOUNT.name;
+    document.getElementById('live-from-phone').textContent = '+' + (ACCOUNT.phone || '').replace(/^\+/, '');
+    document.getElementById('live-from-phone-id').textContent = ACCOUNT.phoneNumberId;
+    document.getElementById('tmpl-from-name').textContent = ACCOUNT.name;
+    document.getElementById('tmpl-from-waba').textContent = ACCOUNT.wabaId;
+    document.getElementById('canales-name').textContent = ACCOUNT.name;
+    document.getElementById('canales-detail').textContent = '+' + (ACCOUNT.phone || '').replace(/^\+/, '') + ' · WABA ID: ' + ACCOUNT.wabaId + ' · Phone Number ID: ' + ACCOUNT.phoneNumberId;
+
+    if (ACCOUNT.testRecipient) {
+      document.getElementById('live-recipient').value = ACCOUNT.testRecipient;
+    }
+  } catch (e) {
+    document.getElementById('asset-name').textContent = '⚠️ ' + e.message;
+  }
 }
 
-// DEFAULT PAGE
-goTo('canales');
+function showResult(elId, ok, payload) {
+  const el = document.getElementById(elId);
+  el.classList.remove('error');
+  if (!ok) el.classList.add('error');
+  let html = '';
+  if (ok && payload.message_id) {
+    html = '<strong>✅ ' + (payload.template ? 'Template message sent' : 'Message sent') + ' via Graph API</strong>';
+    html += 'WhatsApp message id (wamid):\n<span class="wamid">' + payload.message_id + '</span>\n\n';
+    html += 'Sent from phone_number_id: ' + payload.phone_number_id + '\n';
+    html += 'Sent to: ' + payload.to + '\n';
+    if (payload.template) html += 'Template: ' + payload.template + ' (' + payload.language + ')\n';
+    html += '\nFull API response:\n' + JSON.stringify(payload.raw, null, 2);
+  } else if (ok && payload.template_id) {
+    html = '<strong>✅ Template submitted to Meta for review</strong>';
+    html += 'Template id: <span class="wamid">' + payload.template_id + '</span>\n';
+    html += 'Name: ' + payload.name + '\n';
+    html += 'Status: ' + payload.status + '\n';
+    html += 'Category: ' + payload.category + '\n\n';
+    html += 'Full API response:\n' + JSON.stringify(payload.raw, null, 2);
+  } else {
+    html = '<strong>❌ API error</strong>' + JSON.stringify(payload.error || payload, null, 2);
+  }
+  el.innerHTML = html;
+  el.classList.add('show');
+}
+
+async function liveSendMessage() {
+  const btn = document.getElementById('live-send-btn');
+  const to = document.getElementById('live-recipient').value.replace(/[^\d]/g, '');
+  const text = document.getElementById('live-message').value.trim();
+  if (!to || !text) {
+    showResult('live-result', false, { error: 'Recipient and message text are required' });
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const r = await fetch('/api/send-message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to, text })
+    });
+    const data = await r.json();
+    showResult('live-result', r.ok, data);
+
+    if (r.ok && data.message_id) {
+      const msgs = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = 'msg msg-out';
+      div.innerHTML = text + '<div class="msg-time">' + new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}) + '</div><div class="msg-auto" style="color:#16a34a">✓ Live API send · wamid: ' + data.message_id.slice(-12) + '</div>';
+      msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+    }
+  } catch (e) {
+    showResult('live-result', false, { error: String(e) });
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send via Cloud API';
+  }
+}
+
+function sendMsg() { liveSendMessage(); }
+
+async function loadTemplates() {
+  const grid = document.getElementById('template-grid');
+  grid.innerHTML = '<div class="use-case-label">USE CASE: whatsapp_business_management (Templates)</div><div style="grid-column:1/-1;padding:32px;text-align:center;color:#888">Loading templates from Graph API…</div>';
+  try {
+    const r = await fetch('/api/list-templates');
+    const data = await r.json();
+    if (!r.ok) throw new Error(JSON.stringify(data.error || data));
+
+    TEMPLATES.items = data.templates || [];
+    TEMPLATES.byName = {};
+    TEMPLATES.items.forEach(t => { TEMPLATES.byName[t.name + '|' + t.language] = t; });
+    document.getElementById('tmpl-count').textContent = String(data.total);
+
+    let html = '<div class="use-case-label">USE CASE: whatsapp_business_management (Templates) · LIVE FROM API</div>';
+    if (TEMPLATES.items.length === 0) {
+      html += '<div style="grid-column:1/-1;padding:32px;text-align:center;color:#888">No templates yet. Click <strong>+ New Template</strong> to create one.</div>';
+    } else {
+      TEMPLATES.items.forEach(t => {
+        const body = (t.components || []).find(c => c.type === 'BODY');
+        const bodyText = body?.text || '(no body)';
+        const cat = (t.category || 'OTHER').toLowerCase();
+        const catColors = { utility: 'badge-green', marketing: 'background:#fce7f3;color:#be185d', authentication: 'background:#dbeafe;color:#1d4ed8' };
+        const catClass = cat === 'utility' ? 'badge badge-green' : 'badge';
+        const catStyle = cat !== 'utility' ? ('style="' + (catColors[cat] || 'background:#f3f4f6;color:#374151') + '"') : '';
+        const status = (t.status || 'UNKNOWN').toUpperCase();
+        const statusBadge = status === 'APPROVED' ? '<span class="badge badge-green">Approved</span>'
+                          : status === 'PENDING'  ? '<span class="badge badge-yellow">Pending</span>'
+                          : status === 'REJECTED' ? '<span class="badge" style="background:#fee2e2;color:#991b1b">Rejected</span>'
+                          : '<span class="badge badge-gray">' + status + '</span>';
+        const sendBtn = status === 'APPROVED'
+          ? '<button class="btn btn-outline btn-sm" onclick="openSendTemplateFor(\'' + t.name + '\',\'' + t.language + '\')">Send</button>'
+          : '<button class="btn btn-outline btn-sm" disabled>Send</button>';
+
+        html += '<div class="template-card">'
+          + '<div class="template-name">' + t.name + '</div>'
+          + '<div class="template-category"><span class="' + catClass + '" ' + catStyle + '>' + (t.category || 'OTHER') + '</span> <span class="badge badge-gray">' + t.language + '</span></div>'
+          + '<div class="template-body">' + escapeHtml(bodyText) + '</div>'
+          + '<div class="template-footer">' + statusBadge + '<div style="display:flex;gap:6px">' + sendBtn + '</div></div>'
+          + '<div style="font-size:10px;color:#aaa;font-family:monospace;margin-top:6px">id: ' + (t.id || '—') + '</div>'
+          + '</div>';
+      });
+    }
+    grid.innerHTML = html;
+    window.__templatesLoaded = true;
+  } catch (e) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:32px;text-align:center;color:#b91c1c">Error loading templates: ' + escapeHtml(e.message) + '</div>';
+  }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+function countVars(text) {
+  const m = (text || '').match(/\{\{\d+\}\}/g);
+  return m ? new Set(m).size : 0;
+}
+
+let CURRENT_TEMPLATE = null;
+
+function openSendTemplateFor(name, language) {
+  CURRENT_TEMPLATE = TEMPLATES.byName[name + '|' + language];
+  openModal('modal-template-send');
+}
+
+function prepareSendTemplateModal() {
+  const select = document.getElementById('send-tmpl-select');
+  const approved = TEMPLATES.items.filter(t => (t.status || '').toUpperCase() === 'APPROVED');
+  select.innerHTML = approved.length === 0
+    ? '<option value="">(no APPROVED templates yet)</option>'
+    : approved.map(t => '<option value="' + t.name + '|' + t.language + '"' + (CURRENT_TEMPLATE && CURRENT_TEMPLATE.name === t.name && CURRENT_TEMPLATE.language === t.language ? ' selected' : '') + '>' + t.name + ' (' + t.language + ' · ' + t.category + ')</option>').join('');
+
+  document.getElementById('send-tmpl-to').value = ACCOUNT.testRecipient || '';
+  select.onchange = renderSendTemplateVars;
+  if (!CURRENT_TEMPLATE && approved.length) {
+    const first = approved[0];
+    CURRENT_TEMPLATE = first;
+  }
+  renderSendTemplateVars();
+  document.getElementById('send-tmpl-result').classList.remove('show');
+}
+
+function renderSendTemplateVars() {
+  const select = document.getElementById('send-tmpl-select');
+  const wrap = document.getElementById('send-tmpl-vars-wrap');
+  const preview = document.getElementById('send-tmpl-preview');
+  const val = select.value;
+  if (!val) { wrap.innerHTML = ''; preview.textContent = 'Select a template…'; return; }
+  CURRENT_TEMPLATE = TEMPLATES.byName[val];
+  if (!CURRENT_TEMPLATE) return;
+  const body = (CURRENT_TEMPLATE.components || []).find(c => c.type === 'BODY');
+  const text = body?.text || '';
+  const n = countVars(text);
+  let html = '';
+  for (let i = 1; i <= n; i++) {
+    html += '<div style="margin-bottom:8px"><label style="font-size:12px;color:#888;display:block;margin-bottom:4px">Variable {{' + i + '}}</label><input class="tmpl-var" data-idx="' + i + '" oninput="updateSendTemplatePreview()" style="width:100%;border:1px solid #e8e8e8;border-radius:7px;padding:8px 12px;font-size:13px" placeholder="value for {{' + i + '}}"/></div>';
+  }
+  wrap.innerHTML = html;
+  updateSendTemplatePreview();
+}
+
+function updateSendTemplatePreview() {
+  const preview = document.getElementById('send-tmpl-preview');
+  if (!CURRENT_TEMPLATE) { preview.textContent = ''; return; }
+  const body = (CURRENT_TEMPLATE.components || []).find(c => c.type === 'BODY');
+  let text = body?.text || '';
+  document.querySelectorAll('.tmpl-var').forEach(inp => {
+    const idx = inp.getAttribute('data-idx');
+    const v = inp.value || ('{{' + idx + '}}');
+    text = text.replace(new RegExp('\\{\\{' + idx + '\\}\\}', 'g'), v);
+  });
+  preview.textContent = text;
+}
+
+async function liveSendTemplate() {
+  const btn = document.getElementById('send-tmpl-btn');
+  const select = document.getElementById('send-tmpl-select');
+  const val = select.value;
+  if (!val) return showResult('send-tmpl-result', false, { error: 'No template selected' });
+  const [name, language] = val.split('|');
+  const to = document.getElementById('send-tmpl-to').value.replace(/[^\d]/g, '');
+  if (!to) return showResult('send-tmpl-result', false, { error: 'Recipient required' });
+  const params = Array.from(document.querySelectorAll('.tmpl-var')).sort((a,b)=>+a.dataset.idx-+b.dataset.idx).map(i => i.value || ' ');
+
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const r = await fetch('/api/send-template', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to, name, language, parameters: params })
+    });
+    const data = await r.json();
+    showResult('send-tmpl-result', r.ok, data);
+  } catch (e) {
+    showResult('send-tmpl-result', false, { error: String(e) });
+  } finally {
+    btn.disabled = false; btn.textContent = '📤 Send Template via Cloud API';
+  }
+}
+
+async function liveCreateTemplate() {
+  const btn = document.getElementById('new-tmpl-btn');
+  const name = document.getElementById('new-tmpl-name').value.trim();
+  const category = document.getElementById('new-tmpl-category').value;
+  const language = document.getElementById('new-tmpl-language').value;
+  const body = document.getElementById('new-tmpl-body').value.trim();
+  if (!name || !body) return showResult('new-tmpl-result', false, { error: 'Name and body are required' });
+
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  try {
+    const r = await fetch('/api/create-template', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, category, language, body })
+    });
+    const data = await r.json();
+    showResult('new-tmpl-result', r.ok, data);
+    if (r.ok) {
+      window.__templatesLoaded = false;
+      setTimeout(() => loadTemplates(), 1500);
+    }
+  } catch (e) {
+    showResult('new-tmpl-result', false, { error: String(e) });
+  } finally {
+    btn.disabled = false; btn.textContent = 'Submit to Meta via Cloud API →';
+  }
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+loadAccountInfo();
+goTo('mensajes');
 </script>
 </body>
 </html>
