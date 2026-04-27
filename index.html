@@ -402,57 +402,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="chat-layout use-case-highlight">
         <div class="use-case-label">USE CASE: whatsapp_business_messaging</div>
         <div class="chat-list">
-          <div class="chat-list-header">💬 Conversations (8)</div>
-          <div class="chat-item active" onclick="selectChat(this,'María García','📩 Perfect, see you Saturday')">
-            <div class="chat-avatar" style="background:#6c63ff">MG</div>
-            <div style="flex:1;min-width:0">
-              <div class="chat-contact-name">María García</div>
-              <div class="chat-preview">I want to book a table for 4</div>
-            </div>
-            <div class="chat-time">10:32</div>
-          </div>
-          <div class="chat-item" onclick="selectChat(this,'Carlos Ruiz','📩 Do you have vegetarian menu?')">
-            <div class="chat-avatar" style="background:#f59e0b">CR</div>
-            <div style="flex:1;min-width:0">
-              <div class="chat-contact-name">Carlos Ruiz</div>
-              <div class="chat-preview">Do you have vegetarian menu?</div>
-            </div>
-            <div class="chat-time">10:18</div>
-          </div>
-          <div class="chat-item" onclick="selectChat(this,'TechSol Company','📩 Need quote for event')">
-            <div class="chat-avatar" style="background:#10b981">ET</div>
-            <div style="flex:1;min-width:0">
-              <div class="chat-contact-name">TechSol Company</div>
-              <div class="chat-preview">Need quote for corporate event</div>
-            </div>
-            <div class="chat-time">09:45</div>
-          </div>
-          <div class="chat-item" onclick="selectChat(this,'Ana López','🤖 [Auto] Thanks for contacting us!')">
-            <div class="chat-avatar" style="background:#ef4444">AL</div>
-            <div style="flex:1;min-width:0">
-              <div class="chat-contact-name">Ana López</div>
-              <div class="chat-preview">What time do you open today?</div>
-            </div>
-            <div class="chat-time">09:12</div>
-          </div>
+          <div class="chat-list-header">💬 Conversations</div>
+          <div id="chat-list-items"></div>
         </div>
         <div class="chat-main">
           <div class="chat-header">
-            <div class="chat-avatar" style="background:#6c63ff;width:32px;height:32px;font-size:12px">MG</div>
-            <div><div class="chat-header-name" id="chat-name">María García</div><div class="chat-header-status">Online · 24h conversation window open</div></div>
+            <div class="chat-avatar" style="background:#25d366;width:32px;height:32px;font-size:12px" id="chat-avatar">TR</div>
+            <div><div class="chat-header-name" id="chat-name">—</div><div class="chat-header-status" id="chat-status">Test recipient · registered with Meta</div></div>
             <div style="margin-left:auto;display:flex;gap:8px">
-              <button class="btn btn-outline btn-sm" onclick="openModal('modal-template-send')">📋 Send template</button>
+              <button class="btn btn-green btn-sm" onclick="openModal('modal-template-send')">📋 Send Template</button>
             </div>
           </div>
           <div class="chat-messages" id="chat-messages">
-            <div class="msg msg-in">Hi, could I book a table for 4 people on Saturday at 9pm?<div class="msg-time">10:28</div></div>
-            <div class="msg msg-out" style="background:#d4f0ff">Hello! 😊 Of course, what name should we put the reservation under?<div class="msg-time">10:28</div><div class="msg-auto">🤖 Automatic reply (whatsapp_business_messaging)</div></div>
-            <div class="msg msg-in">Under María García, we are 4 adults.<div class="msg-time">10:30</div></div>
-            <div class="msg msg-out">Perfect María, I confirm your reservation: <strong>Saturday, 4 people, 9:00pm</strong>. You'll receive a confirmation shortly. 🎉<div class="msg-time">10:31</div></div>
+            <div style="text-align:center;color:#999;font-size:12px;padding:40px 20px;line-height:1.6">
+              <div style="font-size:32px;margin-bottom:10px">💬</div>
+              No messages yet. Use <strong>📋 Send Template</strong> above to send a WhatsApp template message to this test recipient via the Cloud API.<br><br>
+              <span style="font-size:11px;color:#aaa">Note: free-form text messages only work inside the 24-hour customer-service window. Templates always work.</span>
+            </div>
           </div>
           <div class="chat-input">
-            <input type="text" id="chat-input-field" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMsg()"/>
-            <button class="btn btn-green btn-sm" onclick="sendMsg()">Send</button>
+            <input type="text" id="chat-input-field" placeholder="Type a message (free-form, only inside 24h window)..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+            <button class="btn btn-outline btn-sm" onclick="sendMsg()">Send text</button>
+            <button class="btn btn-green btn-sm" onclick="openModal('modal-template-send')">📋 Template</button>
           </div>
         </div>
       </div>
@@ -948,9 +919,35 @@ async function loadAccountInfo() {
     if (ACCOUNT.testRecipient) {
       document.getElementById('live-recipient').value = ACCOUNT.testRecipient;
     }
+
+    renderTestRecipientChat();
   } catch (e) {
     document.getElementById('asset-name').textContent = '⚠️ ' + e.message;
   }
+}
+
+function renderTestRecipientChat() {
+  const list = document.getElementById('chat-list-items');
+  if (!list || !ACCOUNT.testRecipient) return;
+  const num = ACCOUNT.testRecipient;
+  const initials = num.slice(-2);
+  list.innerHTML =
+    '<div class="chat-item active" onclick="selectTestRecipient()">'
+    + '<div class="chat-avatar" style="background:#25d366">' + initials + '</div>'
+    + '<div style="flex:1;min-width:0">'
+    +   '<div class="chat-contact-name">+' + num + '</div>'
+    +   '<div class="chat-preview" style="color:#16a34a">Test recipient · ready</div>'
+    + '</div>'
+    + '<div class="chat-time">now</div>'
+    + '</div>';
+  document.getElementById('chat-name').textContent = '+' + num;
+  document.getElementById('chat-avatar').textContent = initials;
+}
+
+function selectTestRecipient() {
+  document.querySelectorAll('.chat-item').forEach(i => i.classList.remove('active'));
+  const first = document.querySelector('#chat-list-items .chat-item');
+  if (first) first.classList.add('active');
 }
 
 function showResult(elId, ok, payload) {
@@ -998,11 +995,12 @@ async function liveSendMessage() {
     showResult('live-result', r.ok, data);
 
     if (r.ok && data.message_id) {
-      const msgs = document.getElementById('chat-messages');
-      const div = document.createElement('div');
-      div.className = 'msg msg-out';
-      div.innerHTML = text + '<div class="msg-time">' + new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}) + '</div><div class="msg-auto" style="color:#16a34a">✓ Live API send · wamid: ' + data.message_id.slice(-12) + '</div>';
-      msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+      appendChatBubble(text, true, false, '✓ Live API send · wamid: ' + data.message_id);
+    } else {
+      const msg = data?.error?.message || JSON.stringify(data.error || data);
+      if (/24/.test(msg) || /re-engagement/i.test(msg) || /131047/.test(msg) || /1314/.test(msg)) {
+        appendChatBubble('💡 Free-form text only works inside a 24-hour customer-service window. Click 📋 Send Template — templates always work.', false, false);
+      }
     }
   } catch (e) {
     showResult('live-result', false, { error: String(e) });
@@ -1011,7 +1009,49 @@ async function liveSendMessage() {
   }
 }
 
-function sendMsg() { liveSendMessage(); }
+async function sendMsg() {
+  const input = document.getElementById('chat-input-field');
+  const text = input.value.trim();
+  if (!text) return;
+  if (!ACCOUNT.testRecipient) {
+    appendChatBubble('Recipient not configured. Set TEST_RECIPIENT_NUMBER in Vercel.', false, true);
+    return;
+  }
+  try {
+    const r = await fetch('/api/send-message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to: ACCOUNT.testRecipient, text })
+    });
+    const data = await r.json();
+    if (r.ok && data.message_id) {
+      appendChatBubble(text, true, false, 'wamid: ' + data.message_id);
+      input.value = '';
+    } else {
+      const msg = data?.error?.message || JSON.stringify(data.error || data);
+      appendChatBubble(text, true, true, msg);
+      if (/24/.test(msg) || /re-engagement/i.test(msg) || /1314/.test(msg) || /131047/.test(msg)) {
+        appendChatBubble('💡 Free-form text only works inside a 24-hour customer-service window. Use 📋 Send Template instead — templates always work.', false, false);
+      }
+    }
+  } catch (e) {
+    appendChatBubble(text, true, true, String(e));
+  }
+}
+
+function appendChatBubble(text, outgoing, error, footnote) {
+  const msgs = document.getElementById('chat-messages');
+  if (msgs.querySelector('div[style*="text-align:center"]')) msgs.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'msg ' + (outgoing ? 'msg-out' : 'msg-in');
+  if (error) div.style.background = '#fef2f2';
+  const time = new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+  div.innerHTML = escapeHtml(text)
+    + '<div class="msg-time">' + time + (error ? ' · ❌ error' : '') + '</div>'
+    + (footnote ? '<div class="msg-auto" style="color:' + (error ? '#b91c1c' : '#16a34a') + '">' + escapeHtml(footnote) + '</div>' : '');
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
 
 async function loadTemplates() {
   const grid = document.getElementById('template-grid');
@@ -1146,6 +1186,10 @@ async function liveSendTemplate() {
     });
     const data = await r.json();
     showResult('send-tmpl-result', r.ok, data);
+    if (r.ok && data.message_id) {
+      const previewText = document.getElementById('send-tmpl-preview').textContent || ('[Template ' + name + ']');
+      appendChatBubble('📋 ' + previewText, true, false, 'Template "' + name + '" · wamid: ' + data.message_id);
+    }
   } catch (e) {
     showResult('send-tmpl-result', false, { error: String(e) });
   } finally {
