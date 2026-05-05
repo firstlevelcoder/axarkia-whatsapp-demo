@@ -1,3 +1,5 @@
+import { addMessage } from './_store.js';
+
 const GRAPH = 'https://graph.facebook.com/v21.0';
 
 export default async function handler(req, res) {
@@ -29,10 +31,33 @@ export default async function handler(req, res) {
       })
     });
     const data = await r.json();
-    if (!r.ok) return res.status(r.status).json({ error: data.error || data });
+    if (!r.ok) {
+      addMessage({
+        direction: 'out',
+        from: phoneId,
+        to,
+        type: 'text',
+        text,
+        status: 'failed',
+        error: data.error || data
+      });
+      return res.status(r.status).json({ error: data.error || data });
+    }
+
+    const wamid = data.messages?.[0]?.id;
+    addMessage({
+      direction: 'out',
+      from: phoneId,
+      to,
+      type: 'text',
+      text,
+      wamid,
+      status: 'sent',
+      raw: data
+    });
 
     return res.status(200).json({
-      message_id: data.messages?.[0]?.id,
+      message_id: wamid,
       to,
       phone_number_id: phoneId,
       raw: data

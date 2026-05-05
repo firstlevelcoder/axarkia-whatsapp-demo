@@ -162,7 +162,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .data-value{font-weight:600;font-family:monospace;font-size:11px}
 
 /* CHAT */
-.chat-layout{display:grid;grid-template-columns:260px 1fr;gap:0;background:#fff;border-radius:12px;border:1px solid #e8e8e8;height:480px;overflow:hidden}
+.chat-layout{display:grid;grid-template-columns:260px 1fr;gap:0;background:#fff;border-radius:12px;border:1px solid #e8e8e8;height:480px;overflow:hidden;margin-top:18px}
 .chat-list{border-right:1px solid #e8e8e8;overflow-y:auto}
 .chat-list-header{padding:14px;font-size:13px;font-weight:600;border-bottom:1px solid #e8e8e8;background:#f8f8f8}
 .chat-item{padding:12px 14px;cursor:pointer;border-bottom:1px solid #f0f0f0;display:flex;gap:10px;align-items:center;transition:background .1s}
@@ -372,6 +372,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <strong>Step 2 - Messaging (whatsapp_business_messaging):</strong> This shows our core use case — sending and receiving WhatsApp messages on behalf of the connected business. We use this permission to manage real-time conversations.
       </div>
 
+      <!-- DIAGNOSTIC PANEL -->
+      <div style="background:#fff;border:1px dashed #f59e0b;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:12px;display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+        <strong style="color:#92400e">🩺 Webhook diagnostic</strong>
+        <span>Server store: <strong id="diag-total">?</strong> msgs (<span id="diag-in">?</span> in / <span id="diag-out">?</span> out)</span>
+        <span>Last poll: <span id="diag-last-poll">never</span></span>
+        <span>Last incoming: <span id="diag-last-in">never</span></span>
+        <button class="btn btn-outline btn-sm" onclick="refreshDiag()">↻ Refresh</button>
+        <button class="btn btn-outline btn-sm" onclick="simulateIncoming()">📥 Simulate incoming message</button>
+        <span style="color:#888;font-size:11px;flex-basis:100%">If "Simulate incoming" makes a message appear, polling works → the issue is that Meta isn't delivering to <code>/api/whatsapp</code> (check webhook subscription to <code>messages</code> field).</span>
+      </div>
+
       <!-- LIVE SEND PANEL — calls real WhatsApp Cloud API -->
       <div class="live-send-panel">
         <div class="live-send-panel-title">📡 Live API send · whatsapp_business_messaging</div>
@@ -407,8 +418,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         </div>
         <div class="chat-main">
           <div class="chat-header">
-            <div class="chat-avatar" style="background:#25d366;width:32px;height:32px;font-size:12px" id="chat-avatar">TR</div>
-            <div><div class="chat-header-name" id="chat-name">—</div><div class="chat-header-status" id="chat-status">Test recipient · registered with Meta</div></div>
+            <div class="chat-avatar" style="background:#25d366;width:32px;height:32px;font-size:12px" id="chat-avatar">—</div>
+            <div><div class="chat-header-name" id="chat-name">No conversation selected</div><div class="chat-header-status" id="chat-status">—</div></div>
             <div style="margin-left:auto;display:flex;gap:8px">
               <button class="btn btn-green btn-sm" onclick="openModal('modal-template-send')">📋 Send Template</button>
             </div>
@@ -890,6 +901,7 @@ function selectChat(el, name) {
 // ============================================================
 const ACCOUNT = { phoneNumberId: '', wabaId: '', phone: '', name: '', testRecipient: '' };
 const TEMPLATES = { items: [], byName: {} };
+const INBOX = { byContact: {}, lastSeq: 0, activeContact: null, pollHandle: null };
 
 async function loadAccountInfo() {
   try {
@@ -918,36 +930,192 @@ async function loadAccountInfo() {
 
     if (ACCOUNT.testRecipient) {
       document.getElementById('live-recipient').value = ACCOUNT.testRecipient;
+      ensureContact(ACCOUNT.testRecipient);
+      if (!INBOX.activeContact) INBOX.activeContact = ACCOUNT.testRecipient;
     }
 
-    renderTestRecipientChat();
+    renderChatList();
+    renderActiveChat();
+    startInboxPolling();
   } catch (e) {
     document.getElementById('asset-name').textContent = '⚠️ ' + e.message;
   }
 }
 
-function renderTestRecipientChat() {
-  const list = document.getElementById('chat-list-items');
-  if (!list || !ACCOUNT.testRecipient) return;
-  const num = ACCOUNT.testRecipient;
-  const initials = num.slice(-2);
-  list.innerHTML =
-    '<div class="chat-item active" onclick="selectTestRecipient()">'
-    + '<div class="chat-avatar" style="background:#25d366">' + initials + '</div>'
-    + '<div style="flex:1;min-width:0">'
-    +   '<div class="chat-contact-name">+' + num + '</div>'
-    +   '<div class="chat-preview" style="color:#16a34a">Test recipient · ready</div>'
-    + '</div>'
-    + '<div class="chat-time">now</div>'
-    + '</div>';
-  document.getElementById('chat-name').textContent = '+' + num;
-  document.getElementById('chat-avatar').textContent = initials;
+function contactKeyFromMsg(m) {
+  return String(m.direction === 'in' ? (m.from || '') : (m.to || '')).replace(/[^\d]/g, '');
 }
 
-function selectTestRecipient() {
-  document.querySelectorAll('.chat-item').forEach(i => i.classList.remove('active'));
-  const first = document.querySelector('#chat-list-items .chat-item');
-  if (first) first.classList.add('active');
+function ensureContact(num) {
+  if (!num) return null;
+  if (!INBOX.byContact[num]) INBOX.byContact[num] = { number: num, messages: [] };
+  return INBOX.byContact[num];
+}
+
+function ingestMessage(m) {
+  const num = contactKeyFromMsg(m);
+  if (!num) return;
+  const c = ensureContact(num);
+  if (m.wamid && c.messages.some(x => x.wamid && x.wamid === m.wamid)) return;
+  c.messages.push(m);
+  c.messages.sort((a, b) => (a.ts || 0) - (b.ts || 0));
+}
+
+function loadLocalSent() {
+  try {
+    const raw = localStorage.getItem('axarkia_msgs_v1');
+    if (!raw) return;
+    const arr = JSON.parse(raw);
+    if (Array.isArray(arr)) arr.forEach(ingestMessage);
+  } catch (e) {}
+}
+
+function persistLocalSent(msg) {
+  try {
+    const raw = localStorage.getItem('axarkia_msgs_v1');
+    const arr = raw ? JSON.parse(raw) : [];
+    arr.push(msg);
+    while (arr.length > 200) arr.shift();
+    localStorage.setItem('axarkia_msgs_v1', JSON.stringify(arr));
+  } catch (e) {}
+}
+
+function renderChatList() {
+  const list = document.getElementById('chat-list-items');
+  if (!list) return;
+
+  const contacts = Object.values(INBOX.byContact).map(c => {
+    const last = c.messages[c.messages.length - 1];
+    return { c, last, ts: last ? last.ts : 0 };
+  }).sort((a, b) => b.ts - a.ts);
+
+  if (contacts.length === 0 && ACCOUNT.testRecipient) {
+    ensureContact(ACCOUNT.testRecipient);
+    return renderChatList();
+  }
+
+  if (!INBOX.activeContact && contacts.length) {
+    INBOX.activeContact = contacts[0].c.number;
+  }
+
+  list.innerHTML = contacts.map(({ c, last }) => {
+    const num = c.number;
+    const initials = num.slice(-2);
+    const preview = last
+      ? (last.direction === 'in' ? '' : 'You: ') + (last.text || '').slice(0, 40)
+      : 'No messages yet';
+    const time = last ? new Date(last.ts).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' }) : '';
+    const active = INBOX.activeContact === num ? ' active' : '';
+    return '<div class="chat-item' + active + '" onclick="selectContact(\'' + num + '\')">'
+      + '<div class="chat-avatar" style="background:#25d366">' + initials + '</div>'
+      + '<div style="flex:1;min-width:0">'
+      +   '<div class="chat-contact-name">+' + num + '</div>'
+      +   '<div class="chat-preview">' + escapeHtml(preview) + '</div>'
+      + '</div>'
+      + '<div class="chat-time">' + time + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderActiveChat() {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const num = INBOX.activeContact;
+  if (!num) {
+    document.getElementById('chat-name').textContent = 'No conversation yet';
+    document.getElementById('chat-avatar').textContent = '—';
+    document.getElementById('chat-status').textContent = 'Waiting for incoming WhatsApp messages…';
+    msgs.innerHTML = '<div style="text-align:center;color:#999;font-size:12px;padding:40px 20px;line-height:1.6"><div style="font-size:32px;margin-bottom:10px">💬</div>No conversations yet. Send a message or wait for an incoming WhatsApp.</div>';
+    return;
+  }
+  const initials = num.slice(-2);
+  document.getElementById('chat-name').textContent = '+' + num;
+  document.getElementById('chat-avatar').textContent = initials;
+  document.getElementById('chat-status').textContent = 'WhatsApp contact · live via Cloud API';
+
+  const c = ensureContact(num);
+  if (!c.messages.length) {
+    msgs.innerHTML = '<div style="text-align:center;color:#999;font-size:12px;padding:40px 20px;line-height:1.6"><div style="font-size:32px;margin-bottom:10px">💬</div>No messages yet with this contact.<br><br><span style="font-size:11px;color:#aaa">Incoming WhatsApp messages from <strong>+' + num + '</strong> will appear here automatically once the webhook is configured in Meta.</span></div>';
+    return;
+  }
+  msgs.innerHTML = c.messages.map(m => {
+    const outgoing = m.direction === 'out';
+    const cls = outgoing ? 'msg-out' : 'msg-in';
+    const time = new Date(m.ts).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+    let footnote = '';
+    if (m.template) footnote = 'Template: ' + m.template + (m.language ? ' (' + m.language + ')' : '');
+    else if (m.wamid) footnote = 'wamid: ' + m.wamid;
+    if (m.status === 'failed') footnote = '❌ ' + (m.error?.message || 'failed');
+    const errStyle = m.status === 'failed' ? 'background:#fef2f2;' : '';
+    return '<div class="msg ' + cls + '" style="' + errStyle + '">'
+      + escapeHtml(m.text || '')
+      + '<div class="msg-time">' + time + (m.status ? ' · ' + m.status : '') + '</div>'
+      + (footnote ? '<div class="msg-auto" style="color:' + (m.status === 'failed' ? '#b91c1c' : '#16a34a') + '">' + escapeHtml(footnote) + '</div>' : '')
+      + '</div>';
+  }).join('');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function selectContact(num) {
+  INBOX.activeContact = num;
+  renderChatList();
+  renderActiveChat();
+}
+
+async function pollMessages() {
+  try {
+    const r = await fetch('/api/messages?since=' + INBOX.lastSeq);
+    const data = await r.json();
+    const lastPollEl = document.getElementById('diag-last-poll');
+    if (lastPollEl) lastPollEl.textContent = new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' (' + (data?.messages?.length || 0) + ' new)';
+    if (data.messages && data.messages.length) {
+      data.messages.forEach(m => {
+        if (m.seq > INBOX.lastSeq) INBOX.lastSeq = m.seq;
+        ingestMessage(m);
+      });
+      renderChatList();
+      renderActiveChat();
+    }
+  } catch (e) {
+    const lastPollEl = document.getElementById('diag-last-poll');
+    if (lastPollEl) lastPollEl.textContent = '❌ ' + String(e).slice(0, 50);
+  }
+}
+
+function startInboxPolling() {
+  if (INBOX.pollHandle) return;
+  pollMessages();
+  INBOX.pollHandle = setInterval(pollMessages, 3000);
+}
+
+async function refreshDiag() {
+  try {
+    const r = await fetch('/api/diag');
+    const data = await r.json();
+    document.getElementById('diag-total').textContent = data.total;
+    document.getElementById('diag-in').textContent = data.incoming;
+    document.getElementById('diag-out').textContent = data.outgoing;
+    const lastIn = (data.last && data.last.direction === 'in') ? new Date(data.last.ts).toLocaleTimeString() + ' from +' + data.last.from : '—';
+    document.getElementById('diag-last-in').textContent = lastIn;
+  } catch (e) {
+    document.getElementById('diag-total').textContent = '❌ ' + String(e).slice(0, 40);
+  }
+}
+
+async function simulateIncoming() {
+  try {
+    const r = await fetch('/api/diag', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: '34999000111', text: '🧪 Test incoming — ' + new Date().toLocaleTimeString() })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(JSON.stringify(data));
+    pollMessages();
+    refreshDiag();
+  } catch (e) {
+    alert('Diag error: ' + e.message);
+  }
 }
 
 function showResult(elId, ok, payload) {
@@ -995,12 +1163,19 @@ async function liveSendMessage() {
     showResult('live-result', r.ok, data);
 
     if (r.ok && data.message_id) {
-      appendChatBubble(text, true, false, '✓ Live API send · wamid: ' + data.message_id);
+      const localMsg = { ts: Date.now(), direction: 'out', from: ACCOUNT.phoneNumberId, to, type: 'text', text, wamid: data.message_id, status: 'sent' };
+      ingestMessage(localMsg);
+      persistLocalSent(localMsg);
+      INBOX.activeContact = to;
+      renderChatList();
+      renderActiveChat();
     } else {
-      const msg = data?.error?.message || JSON.stringify(data.error || data);
-      if (/24/.test(msg) || /re-engagement/i.test(msg) || /131047/.test(msg) || /1314/.test(msg)) {
-        appendChatBubble('💡 Free-form text only works inside a 24-hour customer-service window. Click 📋 Send Template — templates always work.', false, false);
-      }
+      const msgErr = data?.error?.message || JSON.stringify(data.error || data);
+      const failedMsg = { ts: Date.now(), direction: 'out', from: ACCOUNT.phoneNumberId, to, type: 'text', text, status: 'failed', error: { message: msgErr } };
+      ingestMessage(failedMsg);
+      INBOX.activeContact = to;
+      renderChatList();
+      renderActiveChat();
     }
   } catch (e) {
     showResult('live-result', false, { error: String(e) });
@@ -1013,44 +1188,38 @@ async function sendMsg() {
   const input = document.getElementById('chat-input-field');
   const text = input.value.trim();
   if (!text) return;
-  if (!ACCOUNT.testRecipient) {
-    appendChatBubble('Recipient not configured. Set TEST_RECIPIENT_NUMBER in Vercel.', false, true);
+  const to = INBOX.activeContact || ACCOUNT.testRecipient;
+  if (!to) {
+    alert('No contact selected and no TEST_RECIPIENT_NUMBER configured.');
     return;
   }
   try {
     const r = await fetch('/api/send-message', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to: ACCOUNT.testRecipient, text })
+      body: JSON.stringify({ to, text })
     });
     const data = await r.json();
     if (r.ok && data.message_id) {
-      appendChatBubble(text, true, false, 'wamid: ' + data.message_id);
+      const localMsg = { ts: Date.now(), direction: 'out', from: ACCOUNT.phoneNumberId, to, type: 'text', text, wamid: data.message_id, status: 'sent' };
+      ingestMessage(localMsg);
+      persistLocalSent(localMsg);
       input.value = '';
+      renderChatList();
+      renderActiveChat();
     } else {
-      const msg = data?.error?.message || JSON.stringify(data.error || data);
-      appendChatBubble(text, true, true, msg);
-      if (/24/.test(msg) || /re-engagement/i.test(msg) || /1314/.test(msg) || /131047/.test(msg)) {
-        appendChatBubble('💡 Free-form text only works inside a 24-hour customer-service window. Use 📋 Send Template instead — templates always work.', false, false);
-      }
+      const msgErr = data?.error?.message || JSON.stringify(data.error || data);
+      const failedMsg = { ts: Date.now(), direction: 'out', from: ACCOUNT.phoneNumberId, to, type: 'text', text, status: 'failed', error: { message: msgErr } };
+      ingestMessage(failedMsg);
+      renderChatList();
+      renderActiveChat();
     }
   } catch (e) {
-    appendChatBubble(text, true, true, String(e));
+    const failedMsg = { ts: Date.now(), direction: 'out', from: ACCOUNT.phoneNumberId, to, type: 'text', text, status: 'failed', error: { message: String(e) } };
+    ingestMessage(failedMsg);
+    renderChatList();
+    renderActiveChat();
   }
-}
-
-function appendChatBubble(text, outgoing, error, footnote) {
-  const msgs = document.getElementById('chat-messages');
-  if (msgs.querySelector('div[style*="text-align:center"]')) msgs.innerHTML = '';
-  const div = document.createElement('div');
-  div.className = 'msg ' + (outgoing ? 'msg-out' : 'msg-in');
-  if (error) div.style.background = '#fef2f2';
-  const time = new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
-  div.innerHTML = escapeHtml(text)
-    + '<div class="msg-time">' + time + (error ? ' · ❌ error' : '') + '</div>'
-    + (footnote ? '<div class="msg-auto" style="color:' + (error ? '#b91c1c' : '#16a34a') + '">' + escapeHtml(footnote) + '</div>' : '');
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
 }
 
 async function loadTemplates() {
@@ -1188,7 +1357,12 @@ async function liveSendTemplate() {
     showResult('send-tmpl-result', r.ok, data);
     if (r.ok && data.message_id) {
       const previewText = document.getElementById('send-tmpl-preview').textContent || ('[Template ' + name + ']');
-      appendChatBubble('📋 ' + previewText, true, false, 'Template "' + name + '" · wamid: ' + data.message_id);
+      const localMsg = { ts: Date.now(), direction: 'out', from: ACCOUNT.phoneNumberId, to, type: 'template', text: '📋 ' + previewText, template: name, language, wamid: data.message_id, status: 'sent' };
+      ingestMessage(localMsg);
+      persistLocalSent(localMsg);
+      INBOX.activeContact = to;
+      renderChatList();
+      renderActiveChat();
     }
   } catch (e) {
     showResult('send-tmpl-result', false, { error: String(e) });
@@ -1228,6 +1402,12 @@ async function liveCreateTemplate() {
 // ============================================================
 // BOOT
 // ============================================================
+loadLocalSent();
+renderChatList();
+renderActiveChat();
+startInboxPolling();
+refreshDiag();
+setInterval(refreshDiag, 5000);
 loadAccountInfo();
 goTo('mensajes');
 </script>
