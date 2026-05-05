@@ -1064,7 +1064,7 @@ function selectContact(num) {
 
 async function pollMessages() {
   try {
-    const r = await fetch('/api/messages?since=' + INBOX.lastSeq);
+    const r = await fetch('/api/whatsapp?action=messages&since=' + INBOX.lastSeq);
     const data = await r.json();
     const lastPollEl = document.getElementById('diag-last-poll');
     if (lastPollEl) lastPollEl.textContent = new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' (' + (data?.messages?.length || 0) + ' new)';
@@ -1090,7 +1090,7 @@ function startInboxPolling() {
 
 async function refreshDiag() {
   try {
-    const r = await fetch('/api/diag');
+    const r = await fetch('/api/whatsapp?action=diag');
     const data = await r.json();
     document.getElementById('diag-total').textContent = data.total;
     document.getElementById('diag-in').textContent = data.incoming;
@@ -1104,7 +1104,7 @@ async function refreshDiag() {
 
 async function simulateIncoming() {
   try {
-    const r = await fetch('/api/diag', {
+    const r = await fetch('/api/whatsapp?action=simulate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ from: '34999000111', text: '🧪 Test incoming — ' + new Date().toLocaleTimeString() })
