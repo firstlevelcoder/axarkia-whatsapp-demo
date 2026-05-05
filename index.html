@@ -923,22 +923,32 @@ function ingestMessage(m) {
   c.messages.sort((a, b) => (a.ts || 0) - (b.ts || 0));
 }
 
-function loadLocalSent() {
+function loadInbox() {
   try {
-    const raw = localStorage.getItem('axarkia_msgs_v1');
+    const raw = localStorage.getItem('axarkia_inbox_v2');
     if (!raw) return;
-    const arr = JSON.parse(raw);
-    if (Array.isArray(arr)) arr.forEach(ingestMessage);
+    const data = JSON.parse(raw);
+    if (data && typeof data === 'object' && data.byContact) {
+      INBOX.byContact = data.byContact;
+      INBOX.lastSeq = data.lastSeq || 0;
+    }
   } catch (e) {}
 }
 
-function persistLocalSent(msg) {
+function persistInbox() {
   try {
-    const raw = localStorage.getItem('axarkia_msgs_v1');
-    const arr = raw ? JSON.parse(raw) : [];
-    arr.push(msg);
-    while (arr.length > 200) arr.shift();
-    localStorage.setItem('axarkia_msgs_v1', JSON.stringify(arr));
+    const contacts = {};
+    Object.keys(INBOX.byContact).forEach(num => {
+      const c = INBOX.byContact[num];
+      contacts[num] = {
+        number: c.number,
+        messages: c.messages.slice(-200).map(m => ({ ...m, raw: null }))
+      };
+    });
+    localStorage.setItem('axarkia_inbox_v2', JSON.stringify({
+      byContact: contacts,
+      lastSeq: INBOX.lastSeq
+    }));
   } catch (e) {}
 }
 
@@ -1034,6 +1044,7 @@ async function pollMessages() {
         if (m.seq > INBOX.lastSeq) INBOX.lastSeq = m.seq;
         ingestMessage(m);
       });
+      persistInbox();
       renderChatList();
       renderActiveChat();
     }
@@ -1126,7 +1137,7 @@ async function liveSendMessage() {
     if (r.ok && data.message_id) {
       const localMsg = { ts: Date.now(), direction: 'out', from: ACCOUNT.phoneNumberId, to, type: 'text', text, wamid: data.message_id, status: 'sent' };
       ingestMessage(localMsg);
-      persistLocalSent(localMsg);
+      persistInbox();
       INBOX.activeContact = to;
       renderChatList();
       renderActiveChat();
@@ -1164,7 +1175,7 @@ async function sendMsg() {
     if (r.ok && data.message_id) {
       const localMsg = { ts: Date.now(), direction: 'out', from: ACCOUNT.phoneNumberId, to, type: 'text', text, wamid: data.message_id, status: 'sent' };
       ingestMessage(localMsg);
-      persistLocalSent(localMsg);
+      persistInbox();
       input.value = '';
       renderChatList();
       renderActiveChat();
@@ -1320,7 +1331,7 @@ async function liveSendTemplate() {
       const previewText = document.getElementById('send-tmpl-preview').textContent || ('[Template ' + name + ']');
       const localMsg = { ts: Date.now(), direction: 'out', from: ACCOUNT.phoneNumberId, to, type: 'template', text: '📋 ' + previewText, template: name, language, wamid: data.message_id, status: 'sent' };
       ingestMessage(localMsg);
-      persistLocalSent(localMsg);
+      persistInbox();
       INBOX.activeContact = to;
       renderChatList();
       renderActiveChat();
@@ -1363,7 +1374,7 @@ async function liveCreateTemplate() {
 // ============================================================
 // BOOT
 // ============================================================
-loadLocalSent();
+loadInbox();
 renderChatList();
 renderActiveChat();
 startInboxPolling();
