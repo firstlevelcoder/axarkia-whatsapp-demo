@@ -372,44 +372,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <strong>Step 2 - Messaging (whatsapp_business_messaging):</strong> This shows our core use case — sending and receiving WhatsApp messages on behalf of the connected business. We use this permission to manage real-time conversations.
       </div>
 
-      <!-- DIAGNOSTIC PANEL -->
-      <div style="background:#fff;border:1px dashed #f59e0b;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:12px;display:flex;flex-wrap:wrap;gap:14px;align-items:center">
-        <strong style="color:#92400e">🩺 Webhook diagnostic</strong>
-        <span>Server store: <strong id="diag-total">?</strong> msgs (<span id="diag-in">?</span> in / <span id="diag-out">?</span> out)</span>
-        <span>Last poll: <span id="diag-last-poll">never</span></span>
-        <span>Last incoming: <span id="diag-last-in">never</span></span>
-        <button class="btn btn-outline btn-sm" onclick="refreshDiag()">↻ Refresh</button>
-        <button class="btn btn-outline btn-sm" onclick="simulateIncoming()">📥 Simulate incoming message</button>
-        <span style="color:#888;font-size:11px;flex-basis:100%">If "Simulate incoming" makes a message appear, polling works → the issue is that Meta isn't delivering to <code>/api/whatsapp</code> (check webhook subscription to <code>messages</code> field).</span>
-      </div>
-
-      <!-- LIVE SEND PANEL — calls real WhatsApp Cloud API -->
-      <div class="live-send-panel">
-        <div class="live-send-panel-title">📡 Live API send · whatsapp_business_messaging</div>
-        <div class="live-send-panel-sub">This panel calls <code>POST graph.facebook.com/v21.0/{phone_number_id}/messages</code> with the access token authorized via <code>whatsapp_business_messaging</code>. The recipient must be a registered test number on this WABA.</div>
-        <div class="live-send-panel-asset">
-          <span><strong>From:</strong> <span id="live-from-name">—</span></span>
-          <code id="live-from-phone">—</code>
-          <span class="asset-label">Phone Number ID:</span>
-          <code id="live-from-phone-id">—</code>
-        </div>
-        <div class="live-send-grid">
-          <div>
-            <label>Recipient (E.164, no +)</label>
-            <input id="live-recipient" placeholder="34666123456"/>
-          </div>
-          <div>
-            <label>Message text</label>
-            <input id="live-message" value="Hello from Axarkia — Meta App Review live test."/>
-          </div>
-          <div>
-            <label>&nbsp;</label>
-            <button class="live-send-btn" id="live-send-btn" onclick="liveSendMessage()">Send via Cloud API</button>
-          </div>
-        </div>
-        <div class="api-result" id="live-result"></div>
-      </div>
-
       <div class="chat-layout use-case-highlight">
         <div class="use-case-label">USE CASE: whatsapp_business_messaging</div>
         <div class="chat-list">
