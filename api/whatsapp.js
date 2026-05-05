@@ -40,7 +40,7 @@ export default async function handler(req, res) {
   // ---- ACTION: messages (polling) ----
   if (req.method === 'GET' && action === 'messages') {
     const since = parseInt(req.query?.since || '0', 10) || 0;
-    const messages = listMessages(since);
+    const messages = listMessages(since).map(m => ({ ...m, raw: null }));
     return res.status(200).json({ messages, count: messages.length });
   }
 

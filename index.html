@@ -162,7 +162,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .data-value{font-weight:600;font-family:monospace;font-size:11px}
 
 /* CHAT */
-.chat-layout{display:grid;grid-template-columns:260px 1fr;gap:0;background:#fff;border-radius:12px;border:1px solid #e8e8e8;height:480px;overflow:hidden;margin-top:18px}
+.chat-layout{display:grid;grid-template-columns:260px 1fr;gap:0;background:#fff;border-radius:12px;border:1px solid #e8e8e8;height:calc(100vh - 230px);min-height:480px;overflow:hidden;margin-top:18px}
 .chat-list{border-right:1px solid #e8e8e8;overflow-y:auto}
 .chat-list-header{padding:14px;font-size:13px;font-weight:600;border-bottom:1px solid #e8e8e8;background:#f8f8f8}
 .chat-item{padding:12px 14px;cursor:pointer;border-bottom:1px solid #f0f0f0;display:flex;gap:10px;align-items:center;transition:background .1s}
@@ -916,11 +916,12 @@ function ensureContact(num) {
 
 function ingestMessage(m) {
   const num = contactKeyFromMsg(m);
-  if (!num) return;
+  if (!num) return false;
   const c = ensureContact(num);
-  if (m.wamid && c.messages.some(x => x.wamid && x.wamid === m.wamid)) return;
+  if (m.wamid && c.messages.some(x => x.wamid && x.wamid === m.wamid)) return false;
   c.messages.push(m);
   c.messages.sort((a, b) => (a.ts || 0) - (b.ts || 0));
+  return true;
 }
 
 function loadInbox() {
@@ -930,8 +931,10 @@ function loadInbox() {
     const data = JSON.parse(raw);
     if (data && typeof data === 'object' && data.byContact) {
       INBOX.byContact = data.byContact;
-      INBOX.lastSeq = data.lastSeq || 0;
     }
+    // lastSeq is intentionally NOT restored: server cursor resets on cold start,
+    // so we always re-fetch from 0 and rely on wamid-based dedup in ingestMessage.
+    INBOX.lastSeq = 0;
   } catch (e) {}
 }
 
@@ -942,13 +945,10 @@ function persistInbox() {
       const c = INBOX.byContact[num];
       contacts[num] = {
         number: c.number,
-        messages: c.messages.slice(-200).map(m => ({ ...m, raw: null }))
+        messages: c.messages.slice(-500).map(m => ({ ...m, raw: null }))
       };
     });
-    localStorage.setItem('axarkia_inbox_v2', JSON.stringify({
-      byContact: contacts,
-      lastSeq: INBOX.lastSeq
-    }));
+    localStorage.setItem('axarkia_inbox_v2', JSON.stringify({ byContact: contacts }));
   } catch (e) {}
 }
 
@@ -1035,18 +1035,20 @@ function selectContact(num) {
 
 async function pollMessages() {
   try {
-    const r = await fetch('/api/whatsapp?action=messages&since=' + INBOX.lastSeq);
+    const r = await fetch('/api/whatsapp?action=messages&since=0');
     const data = await r.json();
     const lastPollEl = document.getElementById('diag-last-poll');
-    if (lastPollEl) lastPollEl.textContent = new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' (' + (data?.messages?.length || 0) + ' new)';
+    if (lastPollEl) lastPollEl.textContent = new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' (' + (data?.messages?.length || 0) + ' total)';
     if (data.messages && data.messages.length) {
+      let added = 0;
       data.messages.forEach(m => {
-        if (m.seq > INBOX.lastSeq) INBOX.lastSeq = m.seq;
-        ingestMessage(m);
+        if (ingestMessage(m)) added += 1;
       });
-      persistInbox();
-      renderChatList();
-      renderActiveChat();
+      if (added > 0) {
+        persistInbox();
+        renderChatList();
+        renderActiveChat();
+      }
     }
   } catch (e) {
     const lastPollEl = document.getElementById('diag-last-poll');
