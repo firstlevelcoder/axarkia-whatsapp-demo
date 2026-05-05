@@ -1044,7 +1044,6 @@ function renderActiveChat() {
     const time = new Date(m.ts).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
     let footnote = '';
     if (m.template) footnote = 'Template: ' + m.template + (m.language ? ' (' + m.language + ')' : '');
-    else if (m.wamid) footnote = 'wamid: ' + m.wamid;
     if (m.status === 'failed') footnote = '❌ ' + (m.error?.message || 'failed');
     const errStyle = m.status === 'failed' ? 'background:#fef2f2;' : '';
     return '<div class="msg ' + cls + '" style="' + errStyle + '">'
