@@ -1,10 +1,21 @@
 const MAX = 200;
 
 if (!globalThis.__AXARKIA_MSG_STORE__) {
-  globalThis.__AXARKIA_MSG_STORE__ = { messages: [], cursor: 0 };
+  globalThis.__AXARKIA_MSG_STORE__ = { messages: [], cursor: 0, hits: [], hitCount: 0 };
 }
 
 const store = globalThis.__AXARKIA_MSG_STORE__;
+if (!store.hits) { store.hits = []; store.hitCount = 0; }
+
+export function recordHit(info) {
+  store.hitCount += 1;
+  store.hits.push({ ts: Date.now(), ...info });
+  if (store.hits.length > 20) store.hits.splice(0, store.hits.length - 20);
+}
+
+export function getHits() {
+  return { count: store.hitCount, recent: store.hits.slice() };
+}
 
 export function addMessage(msg) {
   store.cursor += 1;

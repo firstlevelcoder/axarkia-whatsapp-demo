@@ -1,4 +1,4 @@
-import { addMessage, updateStatus } from './_store.js';
+import { addMessage, updateStatus, recordHit } from './_store.js';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
@@ -6,6 +6,8 @@ export default async function handler(req, res) {
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
+
+    recordHit({ method: 'GET', mode, tokenMatch: token === verifyToken });
 
     if (mode === 'subscribe' && verifyToken && token === verifyToken) {
       res.setHeader('Content-Type', 'text/plain');
@@ -17,6 +19,14 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      const summary = {
+        method: 'POST',
+        hasEntry: Array.isArray(body?.entry),
+        entryCount: body?.entry?.length || 0,
+        bodyKeys: body ? Object.keys(body) : [],
+        sample: body ? JSON.stringify(body).slice(0, 500) : null
+      };
+      recordHit(summary);
 
       const entries = body?.entry || [];
       for (const entry of entries) {

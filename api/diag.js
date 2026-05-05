@@ -1,4 +1,4 @@
-import { addMessage, listMessages } from './_store.js';
+import { addMessage, listMessages, getHits } from './_store.js';
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
@@ -22,12 +22,15 @@ export default async function handler(req, res) {
   const last = all[all.length - 1] || null;
   const incoming = all.filter(m => m.direction === 'in').length;
   const outgoing = all.filter(m => m.direction === 'out').length;
+  const hits = getHits();
   return res.status(200).json({
     ok: true,
     total: all.length,
     incoming,
     outgoing,
     last,
+    webhook_hits_total: hits.count,
+    webhook_hits_recent: hits.recent,
     env: {
       has_token: !!process.env.WHATSAPP_ACCESS_TOKEN,
       has_phone_id: !!process.env.WHATSAPP_PHONE_NUMBER_ID,
