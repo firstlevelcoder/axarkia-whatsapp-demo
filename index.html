@@ -922,16 +922,12 @@ async function loadAccountInfo() {
     document.getElementById('asset-phone-id').textContent = ACCOUNT.phoneNumberId;
     document.getElementById('asset-waba-id').textContent = ACCOUNT.wabaId;
 
-    document.getElementById('live-from-name').textContent = ACCOUNT.name;
-    document.getElementById('live-from-phone').textContent = '+' + (ACCOUNT.phone || '').replace(/^\+/, '');
-    document.getElementById('live-from-phone-id').textContent = ACCOUNT.phoneNumberId;
     document.getElementById('tmpl-from-name').textContent = ACCOUNT.name;
     document.getElementById('tmpl-from-waba').textContent = ACCOUNT.wabaId;
     document.getElementById('canales-name').textContent = ACCOUNT.name;
     document.getElementById('canales-detail').textContent = '+' + (ACCOUNT.phone || '').replace(/^\+/, '') + ' · WABA ID: ' + ACCOUNT.wabaId + ' · Phone Number ID: ' + ACCOUNT.phoneNumberId;
 
     if (ACCOUNT.testRecipient) {
-      document.getElementById('live-recipient').value = ACCOUNT.testRecipient;
       ensureContact(ACCOUNT.testRecipient);
       if (!INBOX.activeContact) INBOX.activeContact = ACCOUNT.testRecipient;
     }
