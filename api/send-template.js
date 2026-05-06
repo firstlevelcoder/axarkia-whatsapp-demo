@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     });
     const data = await r.json();
     if (!r.ok) {
-      addMessage({
+      await addMessage({
         direction: 'out',
         from: phoneId,
         to,
@@ -63,7 +63,7 @@ export default async function handler(req, res) {
     const previewText = parameters.length
       ? '[template:' + name + '] ' + parameters.join(' | ')
       : '[template:' + name + ']';
-    addMessage({
+    await addMessage({
       direction: 'out',
       from: phoneId,
       to,

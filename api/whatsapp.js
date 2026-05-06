@@ -1,8 +1,7 @@
 import { addMessage, updateStatus, recordHit, listMessages, getHits } from './_store.js';
 
-function parseInbound(value) {
+async function parseInbound(value) {
   const meta = value.metadata || {};
-  const out = [];
   const messages = value.messages || [];
   for (const m of messages) {
     const type = m.type || 'text';
@@ -20,7 +19,7 @@ function parseInbound(value) {
     else if (type === 'location') text = '[location] ' + (m.location?.latitude || '') + ',' + (m.location?.longitude || '');
     else text = '[' + type + ']';
 
-    out.push(addMessage({
+    await addMessage({
       direction: 'in',
       from: m.from,
       to: meta.display_phone_number || meta.phone_number_id || null,
@@ -28,9 +27,8 @@ function parseInbound(value) {
       text,
       wamid: m.id,
       raw: m
-    }));
+    });
   }
-  return out;
 }
 
 export default async function handler(req, res) {
@@ -40,17 +38,18 @@ export default async function handler(req, res) {
   // ---- ACTION: messages (polling) ----
   if (req.method === 'GET' && action === 'messages') {
     const since = parseInt(req.query?.since || '0', 10) || 0;
-    const messages = listMessages(since).map(m => ({ ...m, raw: null }));
+    const all = await listMessages(since);
+    const messages = all.map(m => ({ ...m, raw: null }));
     return res.status(200).json({ messages, count: messages.length });
   }
 
   // ---- ACTION: diag ----
   if (req.method === 'GET' && action === 'diag') {
-    const all = listMessages(0);
+    const all = await listMessages(0);
     const last = all[all.length - 1] || null;
     const incoming = all.filter(m => m.direction === 'in').length;
     const outgoing = all.filter(m => m.direction === 'out').length;
-    const hits = getHits();
+    const hits = await getHits();
     return res.status(200).json({
       ok: true,
       total: all.length,
@@ -59,6 +58,7 @@ export default async function handler(req, res) {
       last,
       webhook_hits_total: hits.count,
       webhook_hits_recent: hits.recent,
+      kv_enabled: !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN),
       env: {
         has_token: !!process.env.WHATSAPP_ACCESS_TOKEN,
         has_phone_id: !!process.env.WHATSAPP_PHONE_NUMBER_ID,
@@ -74,7 +74,7 @@ export default async function handler(req, res) {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
     const from = String(body.from || '34999000111').replace(/[^\d]/g, '');
     const text = String(body.text || 'Test incoming message');
-    const m = addMessage({
+    const m = await addMessage({
       direction: 'in',
       from,
       to: process.env.WHATSAPP_PHONE_NUMBER_ID || null,
@@ -92,7 +92,7 @@ export default async function handler(req, res) {
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
 
-    recordHit({ method: 'GET', mode: mode || null, tokenMatch: token === verifyToken });
+    await recordHit({ method: 'GET', mode: mode || null, tokenMatch: token === verifyToken });
 
     if (mode === 'subscribe' && verifyToken && token === verifyToken) {
       res.setHeader('Content-Type', 'text/plain');
@@ -105,7 +105,7 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : req.body;
-      recordHit({
+      await recordHit({
         method: 'POST',
         hasEntry: Array.isArray(body?.entry),
         entryCount: body?.entry?.length || 0,
@@ -118,16 +118,16 @@ export default async function handler(req, res) {
         const changes = entry.changes || [];
         for (const change of changes) {
           const value = change.value || {};
-          parseInbound(value);
+          await parseInbound(value);
           const statuses = value.statuses || [];
           for (const s of statuses) {
-            if (s.id && s.status) updateStatus(s.id, s.status);
+            if (s.id && s.status) await updateStatus(s.id, s.status);
           }
         }
       }
       return res.status(200).json({ received: true });
     } catch (e) {
-      recordHit({ method: 'POST', error: String(e) });
+      try { await recordHit({ method: 'POST', error: String(e) }); } catch {}
       return res.status(200).json({ received: true, error: String(e) });
     }
   }

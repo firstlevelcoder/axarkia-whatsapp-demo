@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     });
     const data = await r.json();
     if (!r.ok) {
-      addMessage({
+      await addMessage({
         direction: 'out',
         from: phoneId,
         to,
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
     }
 
     const wamid = data.messages?.[0]?.id;
-    addMessage({
+    await addMessage({
       direction: 'out',
       from: phoneId,
       to,
