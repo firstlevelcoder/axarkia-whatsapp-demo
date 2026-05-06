@@ -265,7 +265,7 @@ function doLogin(e) {
 }
 function logout() {
   localStorage.removeItem('axarkia_auth');
-  location.reload();
+  location.href = '/';
 }
 </script>
 
@@ -303,7 +303,7 @@ function logout() {
   <div class="nav-right">
     <span>Restaurante El Olivo S.L.</span>
     <div class="nav-avatar">RE</div>
-    <button onclick="logout()" style="background:transparent;border:1px solid #444;color:#aaa;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;margin-left:6px">Logout</button>
+    <button onclick="logout()" style="background:#dc2626;border:none;color:#fff;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;margin-left:10px;display:flex;align-items:center;gap:6px">⏻ Log out</button>
   </div>
 </nav>
 
@@ -320,6 +320,7 @@ function logout() {
     <div class="sidebar-section">Settings</div>
     <div class="sidebar-item" onclick="goTo('clientes')" id="nav-clientes">👥 My Clients</div>
     <div class="sidebar-item" onclick="goTo('ajustes')" id="nav-ajustes">⚙️ Settings</div>
+    <div class="sidebar-item" onclick="logout()" style="margin-top:18px;color:#dc2626;border-top:1px solid #f0f0f0;padding-top:14px">⏻ Log out</div>
   </aside>
 
   <main class="main">
