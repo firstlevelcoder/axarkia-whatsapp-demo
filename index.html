@@ -229,6 +229,46 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </head>
 <body>
 
+<!-- LOGIN GATE -->
+<div id="login-gate" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0f0f1a 0%,#1a1a2e 100%);z-index:9999;align-items:center;justify-content:center">
+  <form id="login-form" onsubmit="return doLogin(event)" style="background:#fff;border-radius:14px;padding:34px 32px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center">
+    <div style="font-size:32px;margin-bottom:6px">🔒</div>
+    <div style="font-size:20px;font-weight:700;color:#1a1a2e;margin-bottom:6px">Axarkia<span style="color:#6c63ff">.</span></div>
+    <div style="font-size:13px;color:#888;margin-bottom:22px">Sign in to access the WhatsApp panel</div>
+    <input id="login-user" placeholder="Username" autocomplete="username" style="width:100%;border:1px solid #e8e8e8;border-radius:8px;padding:11px 14px;font-size:14px;margin-bottom:10px;outline:none"/>
+    <input id="login-pass" type="password" placeholder="Password" autocomplete="current-password" style="width:100%;border:1px solid #e8e8e8;border-radius:8px;padding:11px 14px;font-size:14px;margin-bottom:14px;outline:none"/>
+    <div id="login-error" style="font-size:12px;color:#dc2626;margin-bottom:12px;min-height:16px"></div>
+    <button type="submit" style="width:100%;background:#6c63ff;color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:600;cursor:pointer">Sign in</button>
+  </form>
+</div>
+
+<script>
+(function() {
+  if (localStorage.getItem('axarkia_auth') !== '1') {
+    document.getElementById('login-gate').style.display = 'flex';
+    document.documentElement.style.overflow = 'hidden';
+    setTimeout(() => { const u = document.getElementById('login-user'); if (u) u.focus(); }, 50);
+  }
+})();
+function doLogin(e) {
+  e.preventDefault();
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if (u === 'admin' && p === 'admin2026') {
+    localStorage.setItem('axarkia_auth', '1');
+    document.getElementById('login-gate').style.display = 'none';
+    document.documentElement.style.overflow = '';
+  } else {
+    document.getElementById('login-error').textContent = 'Invalid username or password';
+  }
+  return false;
+}
+function logout() {
+  localStorage.removeItem('axarkia_auth');
+  location.reload();
+}
+</script>
+
 <!-- META APP REVIEW BANNER - English for Meta reviewers -->
 <div class="meta-review-banner">
   <div>
@@ -263,6 +303,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="nav-right">
     <span>Restaurante El Olivo S.L.</span>
     <div class="nav-avatar">RE</div>
+    <button onclick="logout()" style="background:transparent;border:1px solid #444;color:#aaa;padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;margin-left:6px">Logout</button>
   </div>
 </nav>
 
@@ -372,8 +413,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <strong>Step 2 - Messaging (whatsapp_business_messaging):</strong> This shows our core use case — sending and receiving WhatsApp messages on behalf of the connected business. We use this permission to manage real-time conversations.
       </div>
 
-      <div class="chat-layout use-case-highlight">
-        <div class="use-case-label">USE CASE: whatsapp_business_messaging</div>
+      <div class="chat-layout">
         <div class="chat-list">
           <div class="chat-list-header">💬 Conversations</div>
           <div id="chat-list-items"></div>
